@@ -10,6 +10,8 @@ type ApiEnvelope<T> = {
   success: boolean
 }
 
+type QueryValue = string | number | boolean | undefined | null
+
 const http = axios.create({
   baseURL: '/api/v1',
   timeout: 15000,
@@ -26,9 +28,25 @@ http.interceptors.request.use((config) => {
 export async function listResource<T extends ResourceRecord>(
   endpoint: string,
   search?: string,
+  query?: Record<string, QueryValue>,
 ): Promise<{ items: T[]; total: number }> {
+  const params = new URLSearchParams()
+  if (search) {
+    params.set('search', search)
+  }
+
+  if (query) {
+    for (const [key, value] of Object.entries(query)) {
+      if (value === undefined || value === null || value === '') {
+        continue
+      }
+
+      params.set(key, String(value))
+    }
+  }
+
   const response = await http.get<ApiEnvelope<T[]>>(endpoint, {
-    params: search ? { search } : undefined,
+    params,
   })
 
   return {

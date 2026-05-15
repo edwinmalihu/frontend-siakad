@@ -4,8 +4,10 @@ import { AdminLayout } from './layouts/AdminLayout'
 import { resourceConfigs } from './config/resources'
 import { DashboardPage } from './pages/DashboardPage'
 import { CrudResourcePage } from './pages/CrudResourcePage'
+import { AcademicYearsPage } from './pages/AcademicYearsPage'
 import { LoginPage } from './pages/LoginPage'
 import { PlaceholderPage } from './pages/PlaceholderPage'
+import { SemestersPage } from './pages/SemestersPage'
 
 function App() {
   return (
@@ -17,14 +19,8 @@ function App() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<DashboardPage />} />
 
-          <Route
-            path="/master/academic-years"
-            element={<CrudResourcePage config={resourceConfigs.academicYears} />}
-          />
-          <Route
-            path="/master/semesters"
-            element={<CrudResourcePage config={resourceConfigs.semesters} />}
-          />
+          <Route path="/master/academic-years" element={<AcademicYearsPage />} />
+          <Route path="/master/semesters" element={<SemestersPage />} />
           <Route
             path="/master/departments"
             element={<CrudResourcePage config={resourceConfigs.departments} />}
