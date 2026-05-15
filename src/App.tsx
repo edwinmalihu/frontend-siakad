@@ -5,9 +5,11 @@ import { resourceConfigs } from './config/resources'
 import { DashboardPage } from './pages/DashboardPage'
 import { CrudResourcePage } from './pages/CrudResourcePage'
 import { AcademicYearsPage } from './pages/AcademicYearsPage'
+import { ClassesPage } from './pages/ClassesPage'
 import { LoginPage } from './pages/LoginPage'
 import { PlaceholderPage } from './pages/PlaceholderPage'
 import { SemestersPage } from './pages/SemestersPage'
+import { TeachersPage } from './pages/TeachersPage'
 
 function App() {
   return (
@@ -29,19 +31,13 @@ function App() {
             path="/master/grade-levels"
             element={<CrudResourcePage config={resourceConfigs.gradeLevels} />}
           />
-          <Route
-            path="/master/classes"
-            element={<CrudResourcePage config={resourceConfigs.classes} />}
-          />
+          <Route path="/master/classes" element={<ClassesPage />} />
           <Route
             path="/master/rooms"
             element={<CrudResourcePage config={resourceConfigs.rooms} />}
           />
 
-          <Route
-            path="/academic/teachers"
-            element={<CrudResourcePage config={resourceConfigs.teachers} />}
-          />
+          <Route path="/academic/teachers" element={<TeachersPage />} />
           <Route
             path="/academic/homeroom-assignments"
             element={<CrudResourcePage config={resourceConfigs.homeroomAssignments} />}
