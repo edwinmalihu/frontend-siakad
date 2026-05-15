@@ -6,9 +6,11 @@ import { DashboardPage } from './pages/DashboardPage'
 import { CrudResourcePage } from './pages/CrudResourcePage'
 import { AcademicYearsPage } from './pages/AcademicYearsPage'
 import { ClassesPage } from './pages/ClassesPage'
+import { HomeroomAssignmentsPage } from './pages/HomeroomAssignmentsPage'
 import { LoginPage } from './pages/LoginPage'
 import { PlaceholderPage } from './pages/PlaceholderPage'
 import { SemestersPage } from './pages/SemestersPage'
+import { SubjectsPage } from './pages/SubjectsPage'
 import { TeachersPage } from './pages/TeachersPage'
 
 function App() {
@@ -40,12 +42,9 @@ function App() {
           <Route path="/academic/teachers" element={<TeachersPage />} />
           <Route
             path="/academic/homeroom-assignments"
-            element={<CrudResourcePage config={resourceConfigs.homeroomAssignments} />}
+            element={<HomeroomAssignmentsPage />}
           />
-          <Route
-            path="/academic/subjects"
-            element={<CrudResourcePage config={resourceConfigs.subjects} />}
-          />
+          <Route path="/academic/subjects" element={<SubjectsPage />} />
           <Route
             path="/academic/schedules"
             element={<CrudResourcePage config={resourceConfigs.schedules} />}
