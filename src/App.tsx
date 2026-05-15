@@ -6,9 +6,12 @@ import { DashboardPage } from './pages/DashboardPage'
 import { CrudResourcePage } from './pages/CrudResourcePage'
 import { AcademicYearsPage } from './pages/AcademicYearsPage'
 import { ClassesPage } from './pages/ClassesPage'
+import { DepartmentsPage } from './pages/DepartmentsPage'
+import { GradeLevelsPage } from './pages/GradeLevelsPage'
 import { HomeroomAssignmentsPage } from './pages/HomeroomAssignmentsPage'
 import { LoginPage } from './pages/LoginPage'
 import { PlaceholderPage } from './pages/PlaceholderPage'
+import { SchedulesPage } from './pages/SchedulesPage'
 import { SemestersPage } from './pages/SemestersPage'
 import { SubjectsPage } from './pages/SubjectsPage'
 import { TeachersPage } from './pages/TeachersPage'
@@ -25,14 +28,8 @@ function App() {
 
           <Route path="/master/academic-years" element={<AcademicYearsPage />} />
           <Route path="/master/semesters" element={<SemestersPage />} />
-          <Route
-            path="/master/departments"
-            element={<CrudResourcePage config={resourceConfigs.departments} />}
-          />
-          <Route
-            path="/master/grade-levels"
-            element={<CrudResourcePage config={resourceConfigs.gradeLevels} />}
-          />
+          <Route path="/master/departments" element={<DepartmentsPage />} />
+          <Route path="/master/grade-levels" element={<GradeLevelsPage />} />
           <Route path="/master/classes" element={<ClassesPage />} />
           <Route
             path="/master/rooms"
@@ -45,10 +42,7 @@ function App() {
             element={<HomeroomAssignmentsPage />}
           />
           <Route path="/academic/subjects" element={<SubjectsPage />} />
-          <Route
-            path="/academic/schedules"
-            element={<CrudResourcePage config={resourceConfigs.schedules} />}
-          />
+          <Route path="/academic/schedules" element={<SchedulesPage />} />
 
           <Route
             path="/kesiswaan"
