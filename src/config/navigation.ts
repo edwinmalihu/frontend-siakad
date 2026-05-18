@@ -24,7 +24,13 @@ export const navigationSections: NavigationSection[] = [
   },
   {
     label: 'Student Affairs',
-    items: [{ label: 'Students', path: '/student-affairs/students', icon: Users2 }],
+    items: [
+      { label: 'Students', path: '/student-affairs/students', icon: Users2 },
+      { label: 'Enrollments', path: '/student-affairs/enrollments', icon: School2 },
+      { label: 'Mutations', path: '/student-affairs/mutations', icon: Users2 },
+      { label: 'Graduations', path: '/student-affairs/graduations', icon: GraduationCap },
+      { label: 'Attendances', path: '/student-affairs/attendances', icon: BookOpenCheck },
+    ],
   },
   {
     label: 'Master',
