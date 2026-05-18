@@ -51,6 +51,7 @@ export type NavigationItem = {
   label: string
   path: string
   icon: LucideIcon
+  children?: NavigationItem[]
 }
 
 export type NavigationSection = {

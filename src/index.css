@@ -147,6 +147,23 @@ a {
   gap: 10px;
 }
 
+.sidebar-group {
+  display: grid;
+  gap: 8px;
+}
+
+.sidebar-submenu {
+  display: grid;
+  gap: 6px;
+  margin-left: 16px;
+  padding-left: 14px;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-group--active .sidebar-submenu {
+  border-left-color: rgba(75, 168, 255, 0.35);
+}
+
 .sidebar-section__label {
   padding-inline: 12px;
   color: var(--nav-soft);
@@ -174,12 +191,28 @@ a {
   transform: translateX(2px);
 }
 
+.sidebar-link--parent {
+  font-weight: 700;
+}
+
+.sidebar-link--child {
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: 0.96rem;
+}
+
 .sidebar-link--active {
   color: #ffffff;
   background:
     linear-gradient(135deg, rgba(26, 196, 214, 0.26), rgba(75, 168, 255, 0.3)),
     rgba(255, 255, 255, 0.08);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-link--child.sidebar-link--active {
+  background:
+    linear-gradient(135deg, rgba(75, 168, 255, 0.18), rgba(26, 196, 214, 0.16)),
+    rgba(255, 255, 255, 0.06);
 }
 
 .sidebar-footer {
@@ -633,11 +666,61 @@ a {
 .toolbar__filters {
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 6px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(52, 77, 86, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.toolbar__filters select,
+.toolbar__filters input[type='date'] {
+  min-height: 46px;
+  min-width: 180px;
+  border: 1px solid rgba(52, 77, 86, 0.14);
+  border-radius: 14px;
+  padding: 0.72rem 2.7rem 0.72rem 0.92rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(245, 250, 251, 0.96));
+  color: var(--text);
+  outline: 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    0 1px 2px rgba(25, 43, 51, 0.04);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.toolbar__filters select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(245, 250, 251, 0.96)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2352636c' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat, no-repeat;
+  background-position: 0 0, calc(100% - 14px) 50%;
+  background-size: auto, 14px;
+}
+
+.toolbar__filters input[type='date'] {
+  padding-right: 0.92rem;
+}
+
+.toolbar__filters select:hover,
+.toolbar__filters input[type='date']:hover {
+  border-color: rgba(52, 77, 86, 0.24);
+}
+
+.toolbar__filters select:focus,
+.toolbar__filters input[type='date']:focus {
+  border-color: rgba(26, 196, 214, 0.65);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    0 0 0 4px rgba(26, 196, 214, 0.14);
 }
 
 .segmented-button {
@@ -670,40 +753,49 @@ a {
   box-shadow: 0 0 0 4px rgba(26, 196, 214, 0.14);
 }
 
-.table-wrap {
+.table-wrap,
+.table-shell {
   overflow-x: auto;
 }
 
-.table {
+.table,
+.data-table {
   width: 100%;
   min-width: 860px;
   border-collapse: collapse;
 }
 
 .table th,
-.table td {
+.table td,
+.data-table th,
+.data-table td {
   padding: 16px 22px;
   text-align: left;
   vertical-align: top;
 }
 
-.table th {
+.table th,
+.data-table th {
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.16em;
   color: var(--text-soft);
   border-bottom: 1px solid var(--border);
+  white-space: nowrap;
 }
 
-.table tbody tr {
+.table tbody tr,
+.data-table tbody tr {
   transition: background 160ms ease;
 }
 
-.table tbody tr:hover {
+.table tbody tr:hover,
+.data-table tbody tr:hover {
   background: rgba(26, 196, 214, 0.05);
 }
 
-.table tbody tr + tr td {
+.table tbody tr + tr td,
+.data-table tbody tr + tr td {
   border-top: 1px solid rgba(52, 77, 86, 0.06);
 }
 
@@ -718,21 +810,27 @@ a {
   font-size: 0.9rem;
 }
 
-.table-actions {
+.table-actions,
+.row-actions {
   display: inline-flex;
   gap: 10px;
 }
 
-.table-action {
+.table-action,
+.icon-button {
   border: 0;
   border-radius: 12px;
   padding: 0.7rem 0.9rem;
   background: rgba(52, 77, 86, 0.08);
   color: #35505b;
   font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.table-action--danger {
+.table-action--danger,
+.icon-button--danger {
   background: rgba(255, 107, 91, 0.12);
   color: #c74437;
 }
@@ -740,6 +838,12 @@ a {
 .table-action--success {
   background: rgba(96, 193, 76, 0.14);
   color: #3f942f;
+}
+
+.table-empty {
+  padding: 26px 22px !important;
+  text-align: center !important;
+  color: var(--text-soft);
 }
 
 .inline-status {
@@ -838,7 +942,8 @@ a {
   backdrop-filter: blur(10px);
 }
 
-.modal-panel {
+.modal-panel,
+.modal-card {
   width: min(100%, 860px);
   max-height: min(90vh, 860px);
   overflow: hidden;
@@ -853,12 +958,15 @@ a {
 }
 
 .modal-header,
-.modal-footer {
+.modal-footer,
+.modal-card__header,
+.form-actions {
   padding: 22px 24px;
   border-bottom: 1px solid rgba(52, 77, 86, 0.08);
 }
 
-.modal-footer {
+.modal-footer,
+.form-actions {
   border-top: 1px solid rgba(52, 77, 86, 0.08);
   border-bottom: 0;
   display: flex;
@@ -867,7 +975,8 @@ a {
   flex-wrap: wrap;
 }
 
-.modal-body {
+.modal-body,
+.modal-card form {
   padding: 0 24px 24px;
   overflow: auto;
 }
@@ -892,16 +1001,19 @@ a {
   padding-top: 22px;
 }
 
-.field {
+.field,
+.form-field {
   display: grid;
   gap: 8px;
 }
 
-.field--full {
+.field--full,
+.form-field--full {
   grid-column: 1 / -1;
 }
 
-.field label {
+.field label,
+.form-field span {
   font-size: 0.82rem;
   text-transform: uppercase;
   letter-spacing: 0.14em;
@@ -911,7 +1023,10 @@ a {
 
 .field input,
 .field select,
-.field textarea {
+.field textarea,
+.form-field input,
+.form-field select,
+.form-field textarea {
   width: 100%;
   border: 1px solid rgba(52, 77, 86, 0.14);
   border-radius: 18px;
@@ -927,12 +1042,16 @@ a {
 
 .field input:focus,
 .field select:focus,
-.field textarea:focus {
+.field textarea:focus,
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
   border-color: rgba(26, 196, 214, 0.65);
   box-shadow: 0 0 0 4px rgba(26, 196, 214, 0.14);
 }
 
-.field textarea {
+.field textarea,
+.form-field textarea {
   min-height: 126px;
   resize: vertical;
 }

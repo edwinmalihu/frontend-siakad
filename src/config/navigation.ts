@@ -16,20 +16,21 @@ export const navigationSections: NavigationSection[] = [
     label: 'Inti',
     items: [
       { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-      { label: 'Kesiswaan', path: '/kesiswaan', icon: Users2 },
+      {
+        label: 'Kesiswaan',
+        path: '/kesiswaan',
+        icon: Users2,
+        children: [
+          { label: 'Students', path: '/student-affairs/students', icon: Users2 },
+          { label: 'Enrollments', path: '/student-affairs/enrollments', icon: School2 },
+          { label: 'Mutations', path: '/student-affairs/mutations', icon: Users2 },
+          { label: 'Graduations', path: '/student-affairs/graduations', icon: GraduationCap },
+          { label: 'Attendances', path: '/student-affairs/attendances', icon: BookOpenCheck },
+        ],
+      },
       { label: 'HUBIM', path: '/hubim', icon: Building2 },
       { label: 'Pengumuman', path: '/announcements', icon: Megaphone },
       { label: 'Cari Siswa', path: '/search-students', icon: Search },
-    ],
-  },
-  {
-    label: 'Student Affairs',
-    items: [
-      { label: 'Students', path: '/student-affairs/students', icon: Users2 },
-      { label: 'Enrollments', path: '/student-affairs/enrollments', icon: School2 },
-      { label: 'Mutations', path: '/student-affairs/mutations', icon: Users2 },
-      { label: 'Graduations', path: '/student-affairs/graduations', icon: GraduationCap },
-      { label: 'Attendances', path: '/student-affairs/attendances', icon: BookOpenCheck },
     ],
   },
   {

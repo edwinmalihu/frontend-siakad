@@ -2,7 +2,35 @@ import { LayoutGrid, LogOut, Menu, ShieldCheck } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { navigationSections } from '../config/navigation'
+import type { NavigationItem } from '../types/resources'
 import { useAuth } from '../contexts/useAuth'
+
+function matchesPath(pathname: string, item: NavigationItem): boolean {
+  if (item.path === pathname) {
+    return true
+  }
+
+  return item.children?.some((child) => matchesPath(pathname, child)) ?? false
+}
+
+function findCurrentLabel(pathname: string): string {
+  for (const section of navigationSections) {
+    for (const item of section.items) {
+      if (item.path === pathname) {
+        return `${section.label} / ${item.label}`
+      }
+
+      if (item.children) {
+        const child = item.children.find((entry) => entry.path === pathname)
+        if (child) {
+          return `${item.label} / ${child.label}`
+        }
+      }
+    }
+  }
+
+  return 'Portal Admin'
+}
 
 export function AdminLayout() {
   const location = useLocation()
@@ -10,13 +38,7 @@ export function AdminLayout() {
   const { logout, user } = useAuth()
 
   const currentLabel = useMemo(() => {
-    for (const section of navigationSections) {
-      const item = section.items.find((entry) => entry.path === location.pathname)
-      if (item) {
-        return `${section.label} / ${item.label}`
-      }
-    }
-    return 'Portal Admin'
+    return findCurrentLabel(location.pathname)
   }, [location.pathname])
 
   return (
@@ -37,6 +59,42 @@ export function AdminLayout() {
             <div className="sidebar-section__label">{section.label}</div>
             {section.items.map((item) => {
               const Icon = item.icon
+              const parentActive = matchesPath(location.pathname, item)
+
+              if (item.children?.length) {
+                return (
+                  <div className={`sidebar-group ${parentActive ? 'sidebar-group--active' : ''}`} key={item.path}>
+                    <NavLink
+                      className={({ isActive }) =>
+                        `sidebar-link sidebar-link--parent ${isActive || parentActive ? 'sidebar-link--active' : ''}`
+                      }
+                      onClick={() => setSidebarOpen(false)}
+                      to={item.path}
+                    >
+                      <Icon size={18} />
+                      <span>{item.label}</span>
+                    </NavLink>
+                    <div className="sidebar-submenu">
+                      {item.children.map((child) => {
+                        const ChildIcon = child.icon
+                        return (
+                          <NavLink
+                            className={({ isActive }) =>
+                              `sidebar-link sidebar-link--child ${isActive ? 'sidebar-link--active' : ''}`
+                            }
+                            key={child.path}
+                            onClick={() => setSidebarOpen(false)}
+                            to={child.path}
+                          >
+                            <ChildIcon size={16} />
+                            <span>{child.label}</span>
+                          </NavLink>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              }
 
               return (
                 <NavLink
