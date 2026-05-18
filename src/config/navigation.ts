@@ -23,6 +23,10 @@ export const navigationSections: NavigationSection[] = [
     ],
   },
   {
+    label: 'Student Affairs',
+    items: [{ label: 'Students', path: '/student-affairs/students', icon: Users2 }],
+  },
+  {
     label: 'Master',
     items: [
       { label: 'Academic Years', path: '/master/academic-years', icon: School2 },
@@ -59,7 +63,7 @@ export const dashboardCards: ModuleCard[] = [
   },
   {
     title: 'Kesiswaan',
-    subtitle: 'Area student affairs siap diisi ketika backend student module kita lanjutkan.',
+    subtitle: 'Gerbang cepat ke data siswa inti yang nanti menopang enrollment, absensi, dan disiplin.',
     path: '/kesiswaan',
     accent: 'linear-gradient(135deg, #4ba8ff, #87c6ff)',
     icon: Users2,

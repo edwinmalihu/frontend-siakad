@@ -1,9 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { AdminLayout } from './layouts/AdminLayout'
-import { resourceConfigs } from './config/resources'
 import { DashboardPage } from './pages/DashboardPage'
-import { CrudResourcePage } from './pages/CrudResourcePage'
 import { AcademicYearsPage } from './pages/AcademicYearsPage'
 import { ClassesPage } from './pages/ClassesPage'
 import { DepartmentsPage } from './pages/DepartmentsPage'
@@ -11,8 +9,10 @@ import { GradeLevelsPage } from './pages/GradeLevelsPage'
 import { HomeroomAssignmentsPage } from './pages/HomeroomAssignmentsPage'
 import { LoginPage } from './pages/LoginPage'
 import { PlaceholderPage } from './pages/PlaceholderPage'
+import { RoomsPage } from './pages/RoomsPage'
 import { SchedulesPage } from './pages/SchedulesPage'
 import { SemestersPage } from './pages/SemestersPage'
+import { StudentsPage } from './pages/StudentsPage'
 import { SubjectsPage } from './pages/SubjectsPage'
 import { TeachersPage } from './pages/TeachersPage'
 
@@ -31,10 +31,7 @@ function App() {
           <Route path="/master/departments" element={<DepartmentsPage />} />
           <Route path="/master/grade-levels" element={<GradeLevelsPage />} />
           <Route path="/master/classes" element={<ClassesPage />} />
-          <Route
-            path="/master/rooms"
-            element={<CrudResourcePage config={resourceConfigs.rooms} />}
-          />
+          <Route path="/master/rooms" element={<RoomsPage />} />
 
           <Route path="/academic/teachers" element={<TeachersPage />} />
           <Route
@@ -44,16 +41,8 @@ function App() {
           <Route path="/academic/subjects" element={<SubjectsPage />} />
           <Route path="/academic/schedules" element={<SchedulesPage />} />
 
-          <Route
-            path="/kesiswaan"
-            element={
-              <PlaceholderPage
-                eyebrow="Kesiswaan"
-                title="Modul kesiswaan siap disambungkan berikutnya."
-                description="Backend student affairs belum kita aktifkan sepenuhnya, tetapi shell frontend dan pola CRUD yang sama sudah siap dipakai saat endpoint-nya selesai."
-              />
-            }
-          />
+          <Route path="/kesiswaan" element={<StudentsPage />} />
+          <Route path="/student-affairs/students" element={<StudentsPage />} />
           <Route
             path="/hubim"
             element={
