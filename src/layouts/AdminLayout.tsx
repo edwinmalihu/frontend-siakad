@@ -1,4 +1,4 @@
-import { LayoutGrid, LogOut, Menu, ShieldCheck } from 'lucide-react'
+import { ChevronDown, LayoutGrid, LogOut, Menu, ShieldCheck } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { navigationSections } from '../config/navigation'
@@ -35,11 +35,26 @@ function findCurrentLabel(pathname: string): string {
 export function AdminLayout() {
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
   const { logout, user } = useAuth()
 
   const currentLabel = useMemo(() => {
     return findCurrentLabel(location.pathname)
   }, [location.pathname])
+
+  function isGroupExpanded(item: NavigationItem) {
+    if (!item.children?.length) {
+      return false
+    }
+    return matchesPath(location.pathname, item) || expandedGroups[item.path] === true
+  }
+
+  function toggleGroup(item: NavigationItem) {
+    setExpandedGroups((current) => ({
+      ...current,
+      [item.path]: !(current[item.path] ?? matchesPath(location.pathname, item)),
+    }))
+  }
 
   return (
     <div className="app-shell">
@@ -54,64 +69,84 @@ export function AdminLayout() {
           </div>
         </div>
 
-        {navigationSections.map((section) => (
-          <section className="sidebar-section" key={section.label}>
-            <div className="sidebar-section__label">{section.label}</div>
-            {section.items.map((item) => {
-              const Icon = item.icon
-              const parentActive = matchesPath(location.pathname, item)
+        <div className="sidebar-scroll">
+          {navigationSections.map((section) => (
+            <section className="sidebar-section" key={section.label}>
+              <div className="sidebar-section__label">{section.label}</div>
+              {section.items.map((item) => {
+                const Icon = item.icon
+                const parentActive = matchesPath(location.pathname, item)
 
-              if (item.children?.length) {
-                return (
-                  <div className={`sidebar-group ${parentActive ? 'sidebar-group--active' : ''}`} key={item.path}>
-                    <NavLink
-                      className={({ isActive }) =>
-                        `sidebar-link sidebar-link--parent ${isActive || parentActive ? 'sidebar-link--active' : ''}`
-                      }
-                      onClick={() => setSidebarOpen(false)}
-                      to={item.path}
+                if (item.children?.length) {
+                  const expanded = isGroupExpanded(item)
+                  return (
+                    <div
+                      className={`sidebar-group ${parentActive ? 'sidebar-group--active' : ''} ${expanded ? 'sidebar-group--expanded' : ''}`}
+                      key={item.path}
                     >
-                      <Icon size={18} />
-                      <span>{item.label}</span>
-                    </NavLink>
-                    <div className="sidebar-submenu">
-                      {item.children.map((child) => {
-                        const ChildIcon = child.icon
-                        return (
-                          <NavLink
-                            className={({ isActive }) =>
-                              `sidebar-link sidebar-link--child ${isActive ? 'sidebar-link--active' : ''}`
-                            }
-                            key={child.path}
-                            onClick={() => setSidebarOpen(false)}
-                            to={child.path}
-                          >
-                            <ChildIcon size={16} />
-                            <span>{child.label}</span>
-                          </NavLink>
-                        )
-                      })}
-                    </div>
-                  </div>
-                )
-              }
+                      <div className={`sidebar-parent-row ${parentActive ? 'sidebar-parent-row--active' : ''}`}>
+                        <NavLink
+                          className={({ isActive }) =>
+                            `sidebar-link sidebar-link--parent sidebar-link--parent-main ${isActive || parentActive ? 'sidebar-link--active' : ''}`
+                          }
+                          onClick={() => setSidebarOpen(false)}
+                          to={item.path}
+                        >
+                          <Icon size={18} />
+                          <span>{item.label}</span>
+                        </NavLink>
+                        <button
+                          aria-expanded={expanded}
+                          aria-label={`Toggle ${item.label}`}
+                          className={`sidebar-toggle ${expanded ? 'sidebar-toggle--expanded' : ''}`}
+                          onClick={() => toggleGroup(item)}
+                          type="button"
+                        >
+                          <ChevronDown size={16} />
+                        </button>
+                      </div>
 
-              return (
-                <NavLink
-                  className={({ isActive }) =>
-                    `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`
-                  }
-                  key={item.path}
-                  onClick={() => setSidebarOpen(false)}
-                  to={item.path}
-                >
-                  <Icon size={18} />
-                  <span>{item.label}</span>
-                </NavLink>
-              )
-            })}
-          </section>
-        ))}
+                      <div className={`sidebar-submenu-shell ${expanded ? 'sidebar-submenu-shell--open' : ''}`}>
+                        <div className="sidebar-submenu">
+                          {item.children.map((child) => {
+                            const ChildIcon = child.icon
+                            return (
+                              <NavLink
+                                className={({ isActive }) =>
+                                  `sidebar-link sidebar-link--child ${isActive ? 'sidebar-link--active' : ''}`
+                                }
+                                key={child.path}
+                                onClick={() => setSidebarOpen(false)}
+                                to={child.path}
+                              >
+                                <ChildIcon size={16} />
+                                <span>{child.label}</span>
+                              </NavLink>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                }
+
+                return (
+                  <NavLink
+                    className={({ isActive }) =>
+                      `sidebar-link ${isActive ? 'sidebar-link--active' : ''}`
+                    }
+                    key={item.path}
+                    onClick={() => setSidebarOpen(false)}
+                    to={item.path}
+                  >
+                    <Icon size={18} />
+                    <span>{item.label}</span>
+                  </NavLink>
+                )
+              })}
+            </section>
+          ))}
+        </div>
 
         <div className="sidebar-footer">
           Backend Go dan frontend React sekarang sudah searah.

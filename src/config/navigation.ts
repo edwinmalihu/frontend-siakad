@@ -40,25 +40,39 @@ export const navigationSections: NavigationSection[] = [
   {
     label: 'Master',
     items: [
-      { label: 'Academic Years', path: '/master/academic-years', icon: School2 },
-      { label: 'Semesters', path: '/master/semesters', icon: School2 },
-      { label: 'Departments', path: '/master/departments', icon: Settings2 },
-      { label: 'Grade Levels', path: '/master/grade-levels', icon: Settings2 },
-      { label: 'Classes', path: '/master/classes', icon: Settings2 },
-      { label: 'Rooms', path: '/master/rooms', icon: Settings2 },
+      {
+        label: 'Master Data',
+        path: '/master/academic-years',
+        icon: Settings2,
+        children: [
+          { label: 'Academic Years', path: '/master/academic-years', icon: School2 },
+          { label: 'Semesters', path: '/master/semesters', icon: School2 },
+          { label: 'Departments', path: '/master/departments', icon: Settings2 },
+          { label: 'Grade Levels', path: '/master/grade-levels', icon: Settings2 },
+          { label: 'Classes', path: '/master/classes', icon: Settings2 },
+          { label: 'Rooms', path: '/master/rooms', icon: Settings2 },
+        ],
+      },
     ],
   },
   {
     label: 'Academic',
     items: [
-      { label: 'Teachers', path: '/academic/teachers', icon: GraduationCap },
       {
-        label: 'Homeroom Assignments',
-        path: '/academic/homeroom-assignments',
+        label: 'Academic Menu',
+        path: '/academic/teachers',
         icon: GraduationCap,
+        children: [
+          { label: 'Teachers', path: '/academic/teachers', icon: GraduationCap },
+          {
+            label: 'Homeroom Assignments',
+            path: '/academic/homeroom-assignments',
+            icon: GraduationCap,
+          },
+          { label: 'Subjects', path: '/academic/subjects', icon: BookOpenCheck },
+          { label: 'Schedules', path: '/academic/schedules', icon: BookOpenCheck },
+        ],
       },
-      { label: 'Subjects', path: '/academic/subjects', icon: BookOpenCheck },
-      { label: 'Schedules', path: '/academic/schedules', icon: BookOpenCheck },
     ],
   },
 ]

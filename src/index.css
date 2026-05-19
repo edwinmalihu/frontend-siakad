@@ -98,6 +98,7 @@ a {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  overflow: hidden;
 }
 
 .sidebar-brand {
@@ -142,6 +143,30 @@ a {
   font-size: 0.9rem;
 }
 
+.sidebar-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  align-content: start;
+  gap: 22px;
+  padding-right: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
 .sidebar-section {
   display: grid;
   gap: 10px;
@@ -152,12 +177,36 @@ a {
   gap: 8px;
 }
 
+.sidebar-parent-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-parent-row--active .sidebar-toggle {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-submenu-shell {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 180ms ease;
+}
+
+.sidebar-submenu-shell--open {
+  grid-template-rows: 1fr;
+}
+
 .sidebar-submenu {
   display: grid;
   gap: 6px;
   margin-left: 16px;
   padding-left: 14px;
   border-left: 1px solid rgba(255, 255, 255, 0.08);
+  min-height: 0;
+  overflow: hidden;
 }
 
 .sidebar-group--active .sidebar-submenu {
@@ -195,10 +244,42 @@ a {
   font-weight: 700;
 }
 
+.sidebar-link--parent-main {
+  min-width: 0;
+}
+
 .sidebar-link--child {
   padding: 10px 12px;
   border-radius: 14px;
   font-size: 0.96rem;
+}
+
+.sidebar-toggle {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 12px;
+  display: inline-grid;
+  place-items: center;
+  background: transparent;
+  color: var(--nav-soft);
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.sidebar-toggle:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-toggle--expanded svg {
+  transform: rotate(180deg);
+}
+
+.sidebar-toggle svg {
+  transition: transform 180ms ease;
 }
 
 .sidebar-link--active {
@@ -216,12 +297,12 @@ a {
 }
 
 .sidebar-footer {
-  margin-top: auto;
   padding: 16px;
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.06);
   color: var(--nav-soft);
   font-size: 0.92rem;
+  flex-shrink: 0;
 }
 
 .app-main {
