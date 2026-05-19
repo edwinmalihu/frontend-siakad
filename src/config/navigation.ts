@@ -1,6 +1,7 @@
 import {
   BookOpenCheck,
   Building2,
+  ShieldAlert,
   GraduationCap,
   LayoutDashboard,
   Megaphone,
@@ -26,6 +27,7 @@ export const navigationSections: NavigationSection[] = [
           { label: 'Mutations', path: '/student-affairs/mutations', icon: Users2 },
           { label: 'Graduations', path: '/student-affairs/graduations', icon: GraduationCap },
           { label: 'Attendances', path: '/student-affairs/attendances', icon: BookOpenCheck },
+          { label: 'Discipline', path: '/student-affairs/discipline', icon: ShieldAlert },
         ],
       },
       { label: 'HUBIM', path: '/hubim', icon: Building2 },

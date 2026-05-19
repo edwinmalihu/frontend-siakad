@@ -620,6 +620,15 @@ a {
   padding: 22px;
 }
 
+.panel-heading {
+  margin: 6px 0 0;
+  color: var(--heading);
+  font-family: 'IBM Plex Sans Condensed', sans-serif;
+  font-size: 1.45rem;
+  line-height: 1.02;
+  text-transform: uppercase;
+}
+
 .toolbar {
   display: flex;
   align-items: center;
