@@ -7,6 +7,7 @@ import { AttendancesPage } from './pages/AttendancesPage'
 import { ClassesPage } from './pages/ClassesPage'
 import { DepartmentsPage } from './pages/DepartmentsPage'
 import { DisciplinePage } from './pages/DisciplinePage'
+import { ExtracurricularPage } from './pages/ExtracurricularPage'
 import { GradeLevelsPage } from './pages/GradeLevelsPage'
 import { HomeroomAssignmentsPage } from './pages/HomeroomAssignmentsPage'
 import { LoginPage } from './pages/LoginPage'
@@ -53,6 +54,7 @@ function App() {
           <Route path="/student-affairs/graduations" element={<StudentGraduationsPage />} />
           <Route path="/student-affairs/attendances" element={<AttendancesPage />} />
           <Route path="/student-affairs/discipline" element={<DisciplinePage />} />
+          <Route path="/student-affairs/extracurricular" element={<ExtracurricularPage />} />
           <Route
             path="/hubim"
             element={

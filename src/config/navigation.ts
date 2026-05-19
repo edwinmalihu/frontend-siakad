@@ -1,6 +1,7 @@
 import {
   BookOpenCheck,
   Building2,
+  Dumbbell,
   ShieldAlert,
   GraduationCap,
   LayoutDashboard,
@@ -28,6 +29,7 @@ export const navigationSections: NavigationSection[] = [
           { label: 'Graduations', path: '/student-affairs/graduations', icon: GraduationCap },
           { label: 'Attendances', path: '/student-affairs/attendances', icon: BookOpenCheck },
           { label: 'Discipline', path: '/student-affairs/discipline', icon: ShieldAlert },
+          { label: 'Extracurricular', path: '/student-affairs/extracurricular', icon: Dumbbell },
         ],
       },
       { label: 'HUBIM', path: '/hubim', icon: Building2 },
