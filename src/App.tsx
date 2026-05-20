@@ -10,6 +10,9 @@ import { DisciplinePage } from './pages/DisciplinePage'
 import { ExtracurricularPage } from './pages/ExtracurricularPage'
 import { GradeLevelsPage } from './pages/GradeLevelsPage'
 import { HomeroomAssignmentsPage } from './pages/HomeroomAssignmentsPage'
+import { HubimCompaniesPage } from './pages/HubimCompaniesPage'
+import { HubimInternshipsPage } from './pages/HubimInternshipsPage'
+import { HubimAlumniPage } from './pages/HubimAlumniPage'
 import { LoginPage } from './pages/LoginPage'
 import { PlaceholderPage } from './pages/PlaceholderPage'
 import { RoomsPage } from './pages/RoomsPage'
@@ -55,16 +58,10 @@ function App() {
           <Route path="/student-affairs/attendances" element={<AttendancesPage />} />
           <Route path="/student-affairs/discipline" element={<DisciplinePage />} />
           <Route path="/student-affairs/extracurricular" element={<ExtracurricularPage />} />
-          <Route
-            path="/hubim"
-            element={
-              <PlaceholderPage
-                eyebrow="HUBIM"
-                title="Area HUBIM sudah punya tempat di layout."
-                description="Begitu endpoint industri, prakerin, dan alumni selesai, kita tinggal menambahkan resource config baru tanpa mengubah shell utama."
-              />
-            }
-          />
+          <Route path="/hubim" element={<Navigate to="/hubim/companies" replace />} />
+          <Route path="/hubim/companies" element={<HubimCompaniesPage />} />
+          <Route path="/hubim/internships" element={<HubimInternshipsPage />} />
+          <Route path="/hubim/alumni" element={<HubimAlumniPage />} />
           <Route
             path="/announcements"
             element={
