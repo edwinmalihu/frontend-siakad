@@ -17,6 +17,7 @@ import { HubimAlumniPage } from './pages/HubimAlumniPage'
 import { LoginPage } from './pages/LoginPage'
 import { RoomsPage } from './pages/RoomsPage'
 import { SchedulesPage } from './pages/SchedulesPage'
+import { SearchStudentsPage } from './pages/SearchStudentsPage'
 import { SemestersPage } from './pages/SemestersPage'
 import { StudentsPage } from './pages/StudentsPage'
 import { StudentEnrollmentsPage } from './pages/StudentEnrollmentsPage'
@@ -63,26 +64,7 @@ function App() {
           <Route path="/hubim/internships" element={<HubimInternshipsPage />} />
           <Route path="/hubim/alumni" element={<HubimAlumniPage />} />
           <Route path="/announcements" element={<AnnouncementsPage />} />
-          <Route
-            path="/search-students"
-            element={
-              <div className="page-stack">
-                <section className="page-header">
-                  <div>
-                    <p className="page-header__eyebrow">Cari Siswa</p>
-                    <h1 className="page-header__title">Global student search akan sangat kuat saat modul siswa sudah penuh.</h1>
-                    <p className="page-header__description">
-                      Nanti halaman ini bisa menjadi agregator biodata, kelas aktif, absensi, pelanggaran, nilai, dan status alumni.
-                    </p>
-                  </div>
-                </section>
-                <section className="placeholder-card">
-                  <strong>Tempat ini sudah disiapkan di layout.</strong>
-                  Begitu backend modul pencarian siap, kita tinggal sambungkan query lintas modul dengan pola yang sama seperti halaman admin lain.
-                </section>
-              </div>
-            }
-          />
+          <Route path="/search-students" element={<SearchStudentsPage />} />
 
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>

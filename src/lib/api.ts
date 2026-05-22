@@ -81,6 +81,11 @@ export async function deleteResource(endpoint: string, id: number): Promise<void
   await http.delete(`${endpoint}/${id}`)
 }
 
+export async function getResource<T extends ResourceRecord>(endpoint: string, id: number): Promise<T> {
+  const response = await http.get<ApiEnvelope<T>>(`${endpoint}/${id}`)
+  return response.data.data
+}
+
 export function extractError(error: unknown): string {
   if (axios.isAxiosError(error)) {
     return (
