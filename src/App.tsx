@@ -4,6 +4,7 @@ import { AdminLayout } from './layouts/AdminLayout'
 import { DashboardPage } from './pages/DashboardPage'
 import { AcademicYearsPage } from './pages/AcademicYearsPage'
 import { AttendancesPage } from './pages/AttendancesPage'
+import { AnnouncementsPage } from './pages/AnnouncementsPage'
 import { ClassesPage } from './pages/ClassesPage'
 import { DepartmentsPage } from './pages/DepartmentsPage'
 import { DisciplinePage } from './pages/DisciplinePage'
@@ -14,7 +15,6 @@ import { HubimCompaniesPage } from './pages/HubimCompaniesPage'
 import { HubimInternshipsPage } from './pages/HubimInternshipsPage'
 import { HubimAlumniPage } from './pages/HubimAlumniPage'
 import { LoginPage } from './pages/LoginPage'
-import { PlaceholderPage } from './pages/PlaceholderPage'
 import { RoomsPage } from './pages/RoomsPage'
 import { SchedulesPage } from './pages/SchedulesPage'
 import { SemestersPage } from './pages/SemestersPage'
@@ -62,24 +62,25 @@ function App() {
           <Route path="/hubim/companies" element={<HubimCompaniesPage />} />
           <Route path="/hubim/internships" element={<HubimInternshipsPage />} />
           <Route path="/hubim/alumni" element={<HubimAlumniPage />} />
-          <Route
-            path="/announcements"
-            element={
-              <PlaceholderPage
-                eyebrow="Pengumuman"
-                title="Ruang pengumuman sudah disiapkan."
-                description="Halaman ini bisa nanti dipakai untuk broadcast umum, pengumuman per unit, dan target role tertentu."
-              />
-            }
-          />
+          <Route path="/announcements" element={<AnnouncementsPage />} />
           <Route
             path="/search-students"
             element={
-              <PlaceholderPage
-                eyebrow="Cari Siswa"
-                title="Global student search akan sangat kuat saat modul siswa sudah penuh."
-                description="Nanti halaman ini bisa menjadi agregator biodata, kelas aktif, absensi, pelanggaran, nilai, dan status alumni."
-              />
+              <div className="page-stack">
+                <section className="page-header">
+                  <div>
+                    <p className="page-header__eyebrow">Cari Siswa</p>
+                    <h1 className="page-header__title">Global student search akan sangat kuat saat modul siswa sudah penuh.</h1>
+                    <p className="page-header__description">
+                      Nanti halaman ini bisa menjadi agregator biodata, kelas aktif, absensi, pelanggaran, nilai, dan status alumni.
+                    </p>
+                  </div>
+                </section>
+                <section className="placeholder-card">
+                  <strong>Tempat ini sudah disiapkan di layout.</strong>
+                  Begitu backend modul pencarian siap, kita tinggal sambungkan query lintas modul dengan pola yang sama seperti halaman admin lain.
+                </section>
+              </div>
             }
           />
 
