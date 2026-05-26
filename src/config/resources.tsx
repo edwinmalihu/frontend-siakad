@@ -796,4 +796,120 @@ export const resourceConfigs: Record<string, ResourceConfig> = {
       },
     ],
   },
+  studentGrades: {
+    key: 'student-grades',
+    route: '/academic/student-grades',
+    title: 'Student Grades',
+    eyebrow: 'Academic',
+    description: 'Kelola nilai akhir siswa per mata pelajaran, kelas, dan periode akademik.',
+    endpoint: '/academic/student-grades',
+    searchPlaceholder: 'Cari nama siswa, NIS, kelas, mapel, tahun ajaran, atau semester…',
+    icon: GraduationCap,
+    accent: 'linear-gradient(135deg, #f59e0b, #ef4444)',
+    initialValues: {
+      student_id: '',
+      class_id: '',
+      subject_id: '',
+      academic_year_id: '',
+      semester_id: '',
+      final_score: '',
+      grade_letter: '',
+      predicate: '',
+    },
+    columns: [
+      {
+        key: 'student_name',
+        header: 'Student',
+        render: (item) => (
+          <>
+            <div className="cell-title">{String(item.student_name ?? '-')}</div>
+            <div className="cell-subtitle">{String(item.student_nis ?? '')}</div>
+          </>
+        ),
+      },
+      { key: 'class_name', header: 'Class' },
+      {
+        key: 'subject_code',
+        header: 'Subject',
+        render: (item) => (
+          <>
+            <div className="cell-title">{String(item.subject_code ?? '-')}</div>
+            <div className="cell-subtitle">{String(item.subject_name ?? '-')}</div>
+          </>
+        ),
+      },
+      { key: 'final_score', header: 'Score', render: (item) => softBadge(String(item.final_score ?? '-')) },
+      { key: 'grade_letter', header: 'Grade' },
+      { key: 'predicate', header: 'Predicate' },
+      {
+        key: 'academic_year_name',
+        header: 'Period',
+        render: (item) => (
+          <>
+            <div className="cell-title">{String(item.academic_year_name ?? '-')}</div>
+            <div className="cell-subtitle">{String(item.semester_name ?? '-')}</div>
+          </>
+        ),
+      },
+    ],
+    fields: [
+      {
+        name: 'student_id',
+        label: 'Siswa',
+        type: 'select',
+        required: true,
+        optionsEndpoint: '/student-affairs/students',
+        getOptionLabel: (item) => `${item.nis} · ${item.full_name}`,
+        valueType: 'number',
+      },
+      {
+        name: 'class_id',
+        label: 'Kelas',
+        type: 'select',
+        required: true,
+        optionsEndpoint: '/master/classes',
+        getOptionLabel: classOptionLabel,
+        valueType: 'number',
+      },
+      {
+        name: 'subject_id',
+        label: 'Mata Pelajaran',
+        type: 'select',
+        required: true,
+        optionsEndpoint: '/academic/subjects',
+        getOptionLabel: (item) => `${item.code} · ${item.name}`,
+        valueType: 'number',
+      },
+      {
+        name: 'academic_year_id',
+        label: 'Tahun Ajaran',
+        type: 'select',
+        required: true,
+        optionsEndpoint: '/master/academic-years',
+        getOptionLabel: (item) => String(item.name ?? '-'),
+        valueType: 'number',
+      },
+      {
+        name: 'semester_id',
+        label: 'Semester',
+        type: 'select',
+        required: true,
+        optionsEndpoint: '/master/semesters',
+        getOptionLabel: (item) => `${item.code} · ${item.name}`,
+        valueType: 'number',
+      },
+      {
+        name: 'final_score',
+        label: 'Nilai Akhir',
+        type: 'number',
+        required: true,
+        min: 0,
+        max: 100,
+        step: '0.01',
+        valueType: 'number',
+      },
+      { name: 'grade_letter', label: 'Huruf Mutu', type: 'text', placeholder: 'A, B+, B, C+, C, D, E' },
+      { name: 'predicate', label: 'Predikat', type: 'text', placeholder: 'Sangat Baik, Baik, Cukup, Kurang' },
+    ],
+  },
 }

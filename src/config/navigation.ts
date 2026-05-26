@@ -90,6 +90,7 @@ export const navigationSections: NavigationSection[] = [
           { label: 'Schedules', path: '/academic/schedules', icon: BookOpenCheck, allowedRoleCodes: ['academic'] },
           { label: 'Assessment Components', path: '/academic/assessment-components', icon: ClipboardCheck, allowedRoleCodes: ['academic'] },
           { label: 'Student Assessments', path: '/academic/student-assessments', icon: ClipboardCheck, allowedRoleCodes: ['academic'] },
+          { label: 'Student Grades', path: '/academic/student-grades', icon: GraduationCap, allowedRoleCodes: ['academic'] },
         ],
       },
     ],

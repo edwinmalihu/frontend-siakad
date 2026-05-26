@@ -26,6 +26,7 @@ import { StudentMutationsPage } from './pages/StudentMutationsPage'
 import { SubjectsPage } from './pages/SubjectsPage'
 import { AssessmentComponentsPage } from './pages/AssessmentComponentsPage'
 import { StudentAssessmentsPage } from './pages/StudentAssessmentsPage'
+import { StudentGradesPage } from './pages/StudentGradesPage'
 import { TeachersPage } from './pages/TeachersPage'
 
 function App() {
@@ -57,6 +58,7 @@ function App() {
             <Route path="/academic/schedules" element={<SchedulesPage />} />
             <Route path="/academic/assessment-components" element={<AssessmentComponentsPage />} />
             <Route path="/academic/student-assessments" element={<StudentAssessmentsPage />} />
+            <Route path="/academic/student-grades" element={<StudentGradesPage />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoleCodes={['student_affairs']} />}>
