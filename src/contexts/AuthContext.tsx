@@ -7,6 +7,7 @@ import {
 } from 'react'
 import axios from 'axios'
 import { clearAuthSession, getStoredToken, getStoredUser, saveAuthSession } from '../lib/auth-storage'
+import { hasRoleAccess as checkRoleAccess } from '../lib/access-control'
 import type { AuthUser, LoginPayload, LoginResult } from '../types/auth'
 import { AuthContext, type AuthContextValue } from './auth-context'
 
@@ -67,6 +68,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<AuthContextValue>(
     () => ({
+      hasRoleAccess(allowedRoleCodes) {
+        return checkRoleAccess(user, allowedRoleCodes)
+      },
       isAuthenticated: Boolean(token && user),
       isLoading,
       token,

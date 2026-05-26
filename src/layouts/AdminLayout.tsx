@@ -2,6 +2,7 @@ import { ChevronDown, LayoutGrid, LogOut, Menu, ShieldCheck } from 'lucide-react
 import { useMemo, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { navigationSections } from '../config/navigation'
+import { filterNavigationByRole, formatRoleLabel } from '../lib/access-control'
 import type { NavigationItem } from '../types/resources'
 import { useAuth } from '../contexts/useAuth'
 
@@ -13,8 +14,8 @@ function matchesPath(pathname: string, item: NavigationItem): boolean {
   return item.children?.some((child) => matchesPath(pathname, child)) ?? false
 }
 
-function findCurrentLabel(pathname: string): string {
-  for (const section of navigationSections) {
+function findCurrentLabel(pathname: string, sections: typeof navigationSections): string {
+  for (const section of sections) {
     for (const item of section.items) {
       if (item.path === pathname) {
         return `${section.label} / ${item.label}`
@@ -37,10 +38,11 @@ export function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
   const { logout, user } = useAuth()
+  const visibleSections = useMemo(() => filterNavigationByRole(navigationSections, user), [user])
 
   const currentLabel = useMemo(() => {
-    return findCurrentLabel(location.pathname)
-  }, [location.pathname])
+    return findCurrentLabel(location.pathname, visibleSections)
+  }, [location.pathname, visibleSections])
 
   function isGroupExpanded(item: NavigationItem) {
     if (!item.children?.length) {
@@ -70,7 +72,7 @@ export function AdminLayout() {
         </div>
 
         <div className="sidebar-scroll">
-          {navigationSections.map((section) => (
+          {visibleSections.map((section) => (
             <section className="sidebar-section" key={section.label}>
               <div className="sidebar-section__label">{section.label}</div>
               {section.items.map((item) => {
@@ -177,7 +179,7 @@ export function AdminLayout() {
             </div>
             <div>
               <strong>{user?.full_name || user?.username || 'Administrator'}</strong>
-              <span>{user?.role_codes?.join(', ') || 'Portal akademik terpadu'}</span>
+              <span>{formatRoleLabel(user)}</span>
             </div>
             <button className="table-action" onClick={logout} type="button">
               <LogOut size={15} />

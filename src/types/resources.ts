@@ -48,6 +48,7 @@ export type ResourceConfig = {
 }
 
 export type NavigationItem = {
+  allowedRoleCodes?: string[]
   label: string
   path: string
   icon: LucideIcon

@@ -108,6 +108,14 @@ type SearchDetail = ResourceRecord & {
 
 const endpoint = '/shared/student-search'
 const formatter = new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
+const tabs = [
+  { key: 'overview', label: 'Overview' },
+  { key: 'attendance', label: 'Attendance' },
+  { key: 'discipline', label: 'Discipline' },
+  { key: 'hubim', label: 'HUBIM' },
+] as const
+
+type DetailTab = (typeof tabs)[number]['key']
 
 function formatDateLabel(value: unknown) {
   if (typeof value !== 'string' || value.trim() === '') return '-'
@@ -143,6 +151,7 @@ export function SearchStudentsPage() {
   const [loading, setLoading] = useState(true)
   const [detailLoading, setDetailLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [activeTab, setActiveTab] = useState<DetailTab>('overview')
 
   const activeCount = useMemo(
     () => items.filter((item) => String(item.status ?? '').toLowerCase() === 'active').length,
@@ -214,6 +223,54 @@ export function SearchStudentsPage() {
       isMounted = false
     }
   }, [selectedID])
+
+  function handleExportSummary() {
+    if (!detail?.student) {
+      return
+    }
+    const lines = [
+      'RINGKASAN SISWA',
+      '',
+      `Nama: ${detail.student.full_name ?? '-'}`,
+      `NIS: ${detail.student.nis ?? '-'}`,
+      `NISN: ${detail.student.nisn ?? '-'}`,
+      `Gender: ${detail.student.gender ?? '-'}`,
+      `Status: ${detail.student.status ?? '-'}`,
+      `Angkatan: ${detail.student.entry_year ?? '-'}`,
+      `Kelas Terakhir: ${detail.latest_enrollment?.class_name ?? '-'}`,
+      `Periode: ${[detail.latest_enrollment?.academic_year_name, detail.latest_enrollment?.semester_name].filter(Boolean).join(' / ') || '-'}`,
+      '',
+      'STATISTIK',
+      `Absensi total: ${detail.stats?.attendance_total ?? 0}`,
+      `Hadir: ${detail.stats?.attendance_present ?? 0}`,
+      `Absent/Alpha: ${detail.stats?.attendance_absent ?? 0}`,
+      `Excused lainnya: ${detail.stats?.attendance_excused ?? 0}`,
+      `Disiplin count: ${detail.stats?.discipline_count ?? 0}`,
+      `Disiplin poin: ${detail.stats?.discipline_point_total ?? 0}`,
+      `Ekskul count: ${detail.stats?.extracurricular_count ?? 0}`,
+      '',
+      'HUBIM',
+      `Prakerin: ${detail.latest_internship?.company_name ?? '-'} (${detail.latest_internship?.status ?? '-'})`,
+      `Alumni: ${detail.alumni?.current_activity ?? '-'} ${detail.alumni?.company_name || detail.alumni?.college_name ? `- ${detail.alumni?.company_name || detail.alumni?.college_name}` : ''}`,
+      '',
+      'ABSENSI TERBARU',
+      ...(detail.recent_attendances?.length
+        ? detail.recent_attendances.map((item) => `- ${formatDateLabel(item.date)} | ${item.class ?? '-'} | ${item.status ?? '-'}`)
+        : ['- Tidak ada data']),
+      '',
+      'DISIPLIN TERBARU',
+      ...(detail.recent_disciplines?.length
+        ? detail.recent_disciplines.map((item) => `- ${formatDateLabel(item.incident_date)} | ${item.category_name ?? '-'} | ${item.point ?? 0} poin`)
+        : ['- Tidak ada data']),
+    ]
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = `student-summary-${detail.student.nis ?? detail.student.id ?? 'unknown'}.txt`
+    anchor.click()
+    URL.revokeObjectURL(url)
+  }
 
   return (
     <div className="page-stack">
@@ -353,8 +410,29 @@ export function SearchStudentsPage() {
 
       <section className="panel">
         <div className="panel__body">
-          <p className="page-header__eyebrow">Detail Agregasi</p>
-          <h2 className="panel-heading">Student Profile Lens</h2>
+          <div className="page-header">
+            <div>
+              <p className="page-header__eyebrow">Detail Agregasi</p>
+              <h2 className="panel-heading">Student Profile Lens</h2>
+            </div>
+            <div className="page-header__actions">
+              <div className="toolbar__filters">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.key}
+                    className={`segmented-button ${activeTab === tab.key ? 'segmented-button--active' : ''}`}
+                    onClick={() => setActiveTab(tab.key)}
+                    type="button"
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+              <button className="button-ghost" disabled={!detail?.student} onClick={handleExportSummary} type="button">
+                Export Ringkasan
+              </button>
+            </div>
+          </div>
 
           {detailLoading ? (
             <div className="table-empty"><LoaderCircle className="spin" size={18} /> Memuat detail siswa...</div>
@@ -404,124 +482,138 @@ export function SearchStudentsPage() {
                 </article>
               </section>
 
-              <section className="resource-grid">
-                <article className="surface-card">
-                  <p className="page-header__eyebrow">Enrollment</p>
-                  <h3 className="panel-heading">Kelas Aktif / Terakhir</h3>
-                  {detail.latest_enrollment ? (
-                    <div className="page-stack" style={{ gap: 10 }}>
-                      <div className="cell-title">{detail.latest_enrollment.class_name}</div>
-                      <div className="cell-subtitle">
-                        {[detail.latest_enrollment.grade_level_code, detail.latest_enrollment.department_code].filter(Boolean).join(' · ')}
-                      </div>
-                      <div className="cell-subtitle">
-                        {[detail.latest_enrollment.academic_year_name, detail.latest_enrollment.semester_name, detail.latest_enrollment.status].filter(Boolean).join(' · ')}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="cell-subtitle">Belum ada data enrollment.</div>
-                  )}
-                </article>
-
-                <article className="surface-card">
-                  <p className="page-header__eyebrow">HUBIM</p>
-                  <h3 className="panel-heading">Prakerin & Alumni</h3>
-                  <div className="page-stack" style={{ gap: 12 }}>
-                    <div>
-                      <div className="cell-title">{detail.latest_internship?.company_name ?? 'Belum ada prakerin'}</div>
-                      <div className="cell-subtitle">
-                        {[detail.latest_internship?.status, detail.latest_internship?.academic_year_name].filter(Boolean).join(' · ') || 'Belum ada status prakerin'}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="cell-title">{detail.alumni?.current_activity ?? 'Belum menjadi alumni'}</div>
-                      <div className="cell-subtitle">
-                        {detail.alumni?.company_name || detail.alumni?.college_name || 'Belum ada data alumni'}
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              </section>
-
-              <section className="resource-grid">
-                <article className="surface-card">
-                  <p className="page-header__eyebrow">Extracurricular</p>
-                  <h3 className="panel-heading">Keanggotaan Ekskul</h3>
-                  {detail.extracurriculars?.length ? (
-                    <div className="page-stack" style={{ gap: 10 }}>
-                      {detail.extracurriculars.map((item, index) => (
-                        <div key={`${item.name}-${index}`}>
-                          <div className="cell-title">{item.name}</div>
+              {activeTab === 'overview' ? (
+                <>
+                  <section className="resource-grid">
+                    <article className="surface-card">
+                      <p className="page-header__eyebrow">Enrollment</p>
+                      <h3 className="panel-heading">Kelas Aktif / Terakhir</h3>
+                      {detail.latest_enrollment ? (
+                        <div className="page-stack" style={{ gap: 10 }}>
+                          <div className="cell-title">{detail.latest_enrollment.class_name}</div>
                           <div className="cell-subtitle">
-                            {[item.academic_year_name, item.status].filter(Boolean).join(' · ')}
+                            {[detail.latest_enrollment.grade_level_code, detail.latest_enrollment.department_code].filter(Boolean).join(' · ')}
+                          </div>
+                          <div className="cell-subtitle">
+                            {[detail.latest_enrollment.academic_year_name, detail.latest_enrollment.semester_name, detail.latest_enrollment.status].filter(Boolean).join(' · ')}
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="cell-subtitle">Belum ada riwayat ekskul.</div>
-                  )}
-                </article>
+                      ) : (
+                        <div className="cell-subtitle">Belum ada data enrollment.</div>
+                      )}
+                    </article>
 
-                <article className="surface-card">
-                  <p className="page-header__eyebrow">Mutasi & Kelulusan</p>
-                  <h3 className="panel-heading">Lifecycle Akademik</h3>
-                  <div className="page-stack" style={{ gap: 12 }}>
-                    <div>
-                      <div className="cell-title">{detail.latest_mutation?.mutation_type ?? 'Belum ada mutasi'}</div>
-                      <div className="cell-subtitle">
-                        {[detail.latest_mutation?.effective_date, detail.latest_mutation?.status].filter(Boolean).join(' · ') || 'Belum ada riwayat mutasi'}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="cell-title">{detail.graduation?.status ?? 'Belum ada status kelulusan'}</div>
-                      <div className="cell-subtitle">
-                        {[detail.graduation?.graduation_date, detail.graduation?.academic_year_name].filter(Boolean).join(' · ')}
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              </section>
-
-              <section className="resource-grid">
-                <article className="surface-card">
-                  <p className="page-header__eyebrow">Recent Attendances</p>
-                  <h3 className="panel-heading">Absensi Terbaru</h3>
-                  {detail.recent_attendances?.length ? (
-                    <div className="page-stack" style={{ gap: 10 }}>
-                      {detail.recent_attendances.map((item, index) => (
-                        <div key={`${item.date}-${index}`}>
-                          <div className="cell-title">{formatDateLabel(item.date)}</div>
+                    <article className="surface-card">
+                      <p className="page-header__eyebrow">Lifecycle</p>
+                      <h3 className="panel-heading">Mutasi & Kelulusan</h3>
+                      <div className="page-stack" style={{ gap: 12 }}>
+                        <div>
+                          <div className="cell-title">{detail.latest_mutation?.mutation_type ?? 'Belum ada mutasi'}</div>
                           <div className="cell-subtitle">
-                            {[item.class, item.status].filter(Boolean).join(' · ')}
+                            {[detail.latest_mutation?.effective_date, detail.latest_mutation?.status].filter(Boolean).join(' · ') || 'Belum ada riwayat mutasi'}
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="cell-subtitle">Belum ada absensi.</div>
-                  )}
-                </article>
-
-                <article className="surface-card">
-                  <p className="page-header__eyebrow">Recent Discipline</p>
-                  <h3 className="panel-heading">Disiplin Terbaru</h3>
-                  {detail.recent_disciplines?.length ? (
-                    <div className="page-stack" style={{ gap: 10 }}>
-                      {detail.recent_disciplines.map((item, index) => (
-                        <div key={`${item.incident_date}-${index}`}>
-                          <div className="cell-title">{item.category_name} · {item.point} poin</div>
+                        <div>
+                          <div className="cell-title">{detail.graduation?.status ?? 'Belum ada status kelulusan'}</div>
                           <div className="cell-subtitle">
-                            {[formatDateLabel(item.incident_date), item.action_taken || item.description].filter(Boolean).join(' · ')}
+                            {[detail.graduation?.graduation_date, detail.graduation?.academic_year_name].filter(Boolean).join(' · ')}
                           </div>
                         </div>
-                      ))}
+                      </div>
+                    </article>
+                  </section>
+
+                  <section className="resource-grid">
+                    <article className="surface-card">
+                      <p className="page-header__eyebrow">Extracurricular</p>
+                      <h3 className="panel-heading">Keanggotaan Ekskul</h3>
+                      {detail.extracurriculars?.length ? (
+                        <div className="page-stack" style={{ gap: 10 }}>
+                          {detail.extracurriculars.map((item, index) => (
+                            <div key={`${item.name}-${index}`}>
+                              <div className="cell-title">{item.name}</div>
+                              <div className="cell-subtitle">
+                                {[item.academic_year_name, item.status].filter(Boolean).join(' · ')}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="cell-subtitle">Belum ada riwayat ekskul.</div>
+                      )}
+                    </article>
+                  </section>
+                </>
+              ) : null}
+
+              {activeTab === 'attendance' ? (
+                <section className="resource-grid">
+                  <article className="surface-card">
+                    <p className="page-header__eyebrow">Recent Attendances</p>
+                    <h3 className="panel-heading">Absensi Terbaru</h3>
+                    {detail.recent_attendances?.length ? (
+                      <div className="page-stack" style={{ gap: 10 }}>
+                        {detail.recent_attendances.map((item, index) => (
+                          <div key={`${item.date}-${index}`}>
+                            <div className="cell-title">{formatDateLabel(item.date)}</div>
+                            <div className="cell-subtitle">
+                              {[item.class, item.status].filter(Boolean).join(' · ')}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="cell-subtitle">Belum ada absensi.</div>
+                    )}
+                  </article>
+                </section>
+              ) : null}
+
+              {activeTab === 'discipline' ? (
+                <section className="resource-grid">
+                  <article className="surface-card">
+                    <p className="page-header__eyebrow">Recent Discipline</p>
+                    <h3 className="panel-heading">Disiplin Terbaru</h3>
+                    {detail.recent_disciplines?.length ? (
+                      <div className="page-stack" style={{ gap: 10 }}>
+                        {detail.recent_disciplines.map((item, index) => (
+                          <div key={`${item.incident_date}-${index}`}>
+                            <div className="cell-title">{item.category_name} · {item.point} poin</div>
+                            <div className="cell-subtitle">
+                              {[formatDateLabel(item.incident_date), item.action_taken || item.description].filter(Boolean).join(' · ')}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="cell-subtitle">Belum ada catatan disiplin.</div>
+                    )}
+                  </article>
+                </section>
+              ) : null}
+
+              {activeTab === 'hubim' ? (
+                <section className="resource-grid">
+                  <article className="surface-card">
+                    <p className="page-header__eyebrow">HUBIM</p>
+                    <h3 className="panel-heading">Prakerin & Alumni</h3>
+                    <div className="page-stack" style={{ gap: 12 }}>
+                      <div>
+                        <div className="cell-title">{detail.latest_internship?.company_name ?? 'Belum ada prakerin'}</div>
+                        <div className="cell-subtitle">
+                          {[detail.latest_internship?.status, detail.latest_internship?.academic_year_name].filter(Boolean).join(' · ') || 'Belum ada status prakerin'}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="cell-title">{detail.alumni?.current_activity ?? 'Belum menjadi alumni'}</div>
+                        <div className="cell-subtitle">
+                          {detail.alumni?.company_name || detail.alumni?.college_name || 'Belum ada data alumni'}
+                        </div>
+                      </div>
                     </div>
-                  ) : (
-                    <div className="cell-subtitle">Belum ada catatan disiplin.</div>
-                  )}
-                </article>
-              </section>
+                  </article>
+                </section>
+              ) : null}
             </div>
           )}
         </div>

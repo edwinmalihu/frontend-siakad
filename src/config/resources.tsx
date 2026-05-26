@@ -1,6 +1,7 @@
 import {
   BookOpenCheck,
   CalendarRange,
+  ClipboardCheck,
   DoorOpen,
   FolderKanban,
   GraduationCap,
@@ -575,6 +576,224 @@ export const resourceConfigs: Record<string, ResourceConfig> = {
       },
       { name: 'start_time', label: 'Start Time', type: 'time', required: true },
       { name: 'end_time', label: 'End Time', type: 'time', required: true },
+    ],
+  },
+  assessmentComponents: {
+    key: 'assessment-components',
+    route: '/academic/assessment-components',
+    title: 'Assessment Components',
+    eyebrow: 'Academic',
+    description: 'Kelola komponen penilaian seperti Tugas, UTS, UAS, dan Praktik per mata pelajaran serta periode.',
+    endpoint: '/academic/assessment-components',
+    searchPlaceholder: 'Cari nama komponen, mapel, tahun ajaran, atau semester…',
+    icon: ClipboardCheck,
+    accent: 'linear-gradient(135deg, #ff6b5b, #ffb648)',
+    initialValues: {
+      subject_id: '',
+      academic_year_id: '',
+      semester_id: '',
+      name: '',
+      weight: '',
+    },
+    columns: [
+      { key: 'name', header: 'Component', render: (item) => <div className="cell-title">{String(item.name ?? '-')}</div> },
+      {
+        key: 'subject_code',
+        header: 'Subject',
+        render: (item) => (
+          <>
+            <div className="cell-title">{String(item.subject_code ?? '-')}</div>
+            <div className="cell-subtitle">{String(item.subject_name ?? '-')}</div>
+          </>
+        ),
+      },
+      {
+        key: 'academic_year_name',
+        header: 'Period',
+        render: (item) => (
+          <>
+            <div className="cell-title">{String(item.academic_year_name ?? '-')}</div>
+            <div className="cell-subtitle">{String(item.semester_name ?? '-')}</div>
+          </>
+        ),
+      },
+      {
+        key: 'weight',
+        header: 'Weight',
+        render: (item) => softBadge(`${String(item.weight ?? 0)}%`),
+      },
+    ],
+    fields: [
+      {
+        name: 'subject_id',
+        label: 'Mata Pelajaran',
+        type: 'select',
+        required: true,
+        optionsEndpoint: '/academic/subjects',
+        getOptionLabel: (item) => `${item.code} · ${item.name}`,
+        valueType: 'number',
+      },
+      {
+        name: 'academic_year_id',
+        label: 'Tahun Ajaran',
+        type: 'select',
+        required: true,
+        optionsEndpoint: '/master/academic-years',
+        getOptionLabel: (item) => String(item.name ?? '-'),
+        valueType: 'number',
+      },
+      {
+        name: 'semester_id',
+        label: 'Semester',
+        type: 'select',
+        required: true,
+        optionsEndpoint: '/master/semesters',
+        getOptionLabel: (item) => `${item.code} · ${item.name}`,
+        valueType: 'number',
+      },
+      {
+        name: 'weight',
+        label: 'Bobot (%)',
+        type: 'number',
+        required: true,
+        min: 0,
+        max: 100,
+        step: '0.01',
+        valueType: 'number',
+      },
+      { name: 'name', label: 'Nama Komponen', type: 'text', required: true, placeholder: 'Tugas, UTS, UAS, Praktik' },
+    ],
+  },
+  studentAssessments: {
+    key: 'student-assessments',
+    route: '/academic/student-assessments',
+    title: 'Student Assessments',
+    eyebrow: 'Academic',
+    description: 'Kelola data penilaian siswa per komponen, mapel, kelas, dan periode akademik.',
+    endpoint: '/academic/student-assessments',
+    searchPlaceholder: 'Cari nama siswa, NIS, kelas, mapel, komponen, atau guru…',
+    icon: ClipboardCheck,
+    accent: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
+    initialValues: {
+      student_id: '',
+      class_id: '',
+      subject_id: '',
+      assessment_component_id: '',
+      teacher_id: '',
+      score: '',
+      academic_year_id: '',
+      semester_id: '',
+    },
+    columns: [
+      {
+        key: 'student_name',
+        header: 'Student',
+        render: (item) => (
+          <>
+            <div className="cell-title">{String(item.student_name ?? '-')}</div>
+            <div className="cell-subtitle">{String(item.student_nis ?? '')}</div>
+          </>
+        ),
+      },
+      { key: 'class_name', header: 'Class' },
+      {
+        key: 'subject_code',
+        header: 'Subject',
+        render: (item) => (
+          <>
+            <div className="cell-title">{String(item.subject_code ?? '-')}</div>
+            <div className="cell-subtitle">{String(item.subject_name ?? '-')}</div>
+          </>
+        ),
+      },
+      { key: 'component_name', header: 'Component' },
+      { key: 'teacher_name', header: 'Teacher' },
+      { key: 'score', header: 'Score' },
+      {
+        key: 'academic_year_name',
+        header: 'Period',
+        render: (item) => (
+          <>
+            <div className="cell-title">{String(item.academic_year_name ?? '-')}</div>
+            <div className="cell-subtitle">{String(item.semester_name ?? '-')}</div>
+          </>
+        ),
+      },
+    ],
+    fields: [
+      {
+        name: 'student_id',
+        label: 'Siswa',
+        type: 'select',
+        required: true,
+        optionsEndpoint: '/student-affairs/students',
+        getOptionLabel: (item) => `${item.nis} · ${item.full_name}`,
+        valueType: 'number',
+      },
+      {
+        name: 'class_id',
+        label: 'Kelas',
+        type: 'select',
+        required: true,
+        optionsEndpoint: '/master/classes',
+        getOptionLabel: classOptionLabel,
+        valueType: 'number',
+      },
+      {
+        name: 'subject_id',
+        label: 'Mata Pelajaran',
+        type: 'select',
+        required: true,
+        optionsEndpoint: '/academic/subjects',
+        getOptionLabel: (item) => `${item.code} · ${item.name}`,
+        valueType: 'number',
+      },
+      {
+        name: 'assessment_component_id',
+        label: 'Komponen',
+        type: 'select',
+        required: true,
+        optionsEndpoint: '/academic/assessment-components',
+        getOptionLabel: (item) => String(item.name ?? '-'),
+        valueType: 'number',
+      },
+      {
+        name: 'teacher_id',
+        label: 'Guru',
+        type: 'select',
+        required: true,
+        optionsEndpoint: '/academic/teachers',
+        getOptionLabel: (item) => `${item.full_name} · ${item.nip || 'Tanpa NIP'}`,
+        valueType: 'number',
+      },
+      {
+        name: 'score',
+        label: 'Nilai',
+        type: 'number',
+        required: true,
+        min: 0,
+        max: 100,
+        step: '0.01',
+        valueType: 'number',
+      },
+      {
+        name: 'academic_year_id',
+        label: 'Tahun Ajaran',
+        type: 'select',
+        required: true,
+        optionsEndpoint: '/master/academic-years',
+        getOptionLabel: (item) => String(item.name ?? '-'),
+        valueType: 'number',
+      },
+      {
+        name: 'semester_id',
+        label: 'Semester',
+        type: 'select',
+        required: true,
+        optionsEndpoint: '/master/semesters',
+        getOptionLabel: (item) => `${item.code} · ${item.name}`,
+        valueType: 'number',
+      },
     ],
   },
 }
