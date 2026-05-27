@@ -6,6 +6,9 @@ import {
   Dumbbell,
   Factory,
   BriefcaseBusiness,
+  FileClock,
+  Shield,
+  ShieldCheck,
   ShieldAlert,
   GraduationCap,
   LayoutDashboard,
@@ -51,6 +54,20 @@ export const navigationSections: NavigationSection[] = [
       },
       { label: 'Pengumuman', path: '/announcements', icon: Megaphone, allowedRoleCodes: ['shared', 'student_affairs', 'academic', 'industry_relations', 'hubim'] },
       { label: 'Cari Siswa', path: '/search-students', icon: Search, allowedRoleCodes: ['shared', 'student_affairs', 'academic', 'industry_relations', 'hubim'] },
+      { label: 'Audit Logs', path: '/audit-logs', icon: FileClock, allowedRoleCodes: ['admin'] },
+      {
+        label: 'Administration',
+        path: '/admin/users',
+        icon: Shield,
+        allowedRoleCodes: ['admin'],
+        children: [
+          { label: 'Users', path: '/admin/users', icon: Users2, allowedRoleCodes: ['admin'] },
+          { label: 'Roles', path: '/admin/roles', icon: Shield, allowedRoleCodes: ['admin'] },
+          { label: 'Permissions', path: '/admin/permissions', icon: ShieldCheck, allowedRoleCodes: ['admin'] },
+          { label: 'Role Permissions', path: '/admin/role-permissions', icon: ShieldCheck, allowedRoleCodes: ['admin'] },
+          { label: 'User Roles', path: '/admin/user-roles', icon: Users2, allowedRoleCodes: ['admin'] },
+        ],
+      },
     ],
   },
   {
@@ -107,6 +124,7 @@ export const dashboardCards: ModuleCard[] = [
     accent: 'linear-gradient(135deg, #1ac4d6, #4ba8ff)',
     icon: BookOpenCheck,
     chips: ['Teachers', 'Subjects', 'Schedules'],
+    allowedRoleCodes: ['academic'],
   },
   {
     title: 'Kesiswaan',
@@ -115,6 +133,7 @@ export const dashboardCards: ModuleCard[] = [
     accent: 'linear-gradient(135deg, #4ba8ff, #87c6ff)',
     icon: Users2,
     chips: ['Siswa', 'Absensi', 'Disiplin'],
+    allowedRoleCodes: ['student_affairs'],
   },
   {
     title: 'HUBIM',
@@ -123,6 +142,7 @@ export const dashboardCards: ModuleCard[] = [
     accent: 'linear-gradient(135deg, #60c14c, #99da5f)',
     icon: Building2,
     chips: ['Perusahaan', 'Prakerin', 'Alumni'],
+    allowedRoleCodes: ['industry_relations', 'hubim'],
   },
   {
     title: 'Pengaturan',
@@ -131,6 +151,7 @@ export const dashboardCards: ModuleCard[] = [
     accent: 'linear-gradient(135deg, #ff6b5b, #ff986d)',
     icon: Settings2,
     chips: ['Master Data', 'Academic Years', 'Classes'],
+    allowedRoleCodes: ['academic'],
   },
   {
     title: 'Pengumuman',
@@ -147,5 +168,23 @@ export const dashboardCards: ModuleCard[] = [
     accent: 'linear-gradient(135deg, #4ba8ff, #8dd0ff)',
     icon: Search,
     chips: ['Global Search', 'Cross Module'],
+  },
+  {
+    title: 'Audit Logs',
+    subtitle: 'Pantau seluruh aktivitas sistem yang tercatat untuk keperluan audit dan keamanan.',
+    path: '/audit-logs',
+    accent: 'linear-gradient(135deg, #8b5cf6, #a78bfa)',
+    icon: FileClock,
+    chips: ['System', 'Activity'],
+    allowedRoleCodes: ['admin'],
+  },
+  {
+    title: 'Administration',
+    subtitle: 'Kelola user, role, dan permission untuk mengatur hak akses seluruh pengguna.',
+    path: '/admin/users',
+    accent: 'linear-gradient(135deg, #6366f1, #818cf8)',
+    icon: Shield,
+    chips: ['Users', 'Roles', 'Permissions'],
+    allowedRoleCodes: ['admin'],
   },
 ]

@@ -1,6 +1,6 @@
-import { startTransition, useDeferredValue, useEffect, useMemo, useState } from 'react'
-import { CalendarRange, LoaderCircle, PencilLine, Plus, Search, Trash2, Users2 } from 'lucide-react'
-import { createResource, deleteResource, extractError, listResource, updateResource } from '../lib/api'
+import { startTransition, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
+import { CalendarRange, Download, LoaderCircle, PencilLine, Plus, Search, Trash2, Upload, Users2 } from 'lucide-react'
+import { createResource, deleteResource, downloadFile, extractError, listResource, updateResource, uploadFile } from '../lib/api'
 import type { ResourceRecord } from '../types/resources'
 
 type StudentRecord = ResourceRecord & {
@@ -125,6 +125,11 @@ export function StudentsPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<StudentRecord | null>(null)
   const [formValues, setFormValues] = useState<FormValues>(toFormValues(null))
+  const [importModalOpen, setImportModalOpen] = useState(false)
+  const [importFile, setImportFile] = useState<File | null>(null)
+  const [importing, setImporting] = useState(false)
+  const [importResult, setImportResult] = useState<string>('')
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const filterQuery = useMemo(() => {
     const query: Record<string, string | number> = {}
@@ -261,6 +266,62 @@ export function StudentsPage() {
     }
   }
 
+  async function handleExport() {
+    try {
+      setErrorMessage('')
+      await downloadFile('/shared/export/students', 'export_students.xlsx')
+    } catch (error) {
+      setErrorMessage(extractError(error))
+    }
+  }
+
+  function handleDownloadTemplate() {
+    downloadFile('/shared/import/students/template', 'template_import_students.xlsx').catch((error) => {
+      setErrorMessage(extractError(error))
+    })
+  }
+
+  function handleImportClick() {
+    setImportFile(null)
+    setImportResult('')
+    setErrorMessage('')
+    setImportModalOpen(true)
+  }
+
+  function handleImportModalClose() {
+    setImportModalOpen(false)
+    setImportFile(null)
+    setImportResult('')
+  }
+
+  async function handleImportSubmit() {
+    if (!importFile) return
+    try {
+      setImporting(true)
+      setErrorMessage('')
+      setImportResult('')
+      const result = await uploadFile<{ imported?: number; skipped?: number; errors?: string[] }>(
+        '/shared/import/students',
+        importFile,
+      )
+      const imported = result.imported ?? 0
+      const skipped = result.skipped ?? 0
+      const errorList = result.errors ?? []
+      let msg = `Import selesai: ${imported} berhasil, ${skipped} dilewati.`
+      if (errorList.length > 0) {
+        msg += `\n${errorList.join('\n')}`
+      }
+      setImportResult(msg)
+      setImportModalOpen(false)
+      setSuccessMessage(msg)
+      await refreshList()
+    } catch (error) {
+      setErrorMessage(extractError(error))
+    } finally {
+      setImporting(false)
+    }
+  }
+
   return (
     <div className="page-stack">
       <section className="page-header">
@@ -272,6 +333,18 @@ export function StudentsPage() {
           </p>
         </div>
         <div className="page-header__actions">
+          <button className="button button-ghost" onClick={handleDownloadTemplate} type="button">
+            <Download size={18} />
+            &nbsp;Template
+          </button>
+          <button className="button button-ghost" onClick={handleImportClick} type="button">
+            <Upload size={18} />
+            &nbsp;Import
+          </button>
+          <button className="button button-ghost" onClick={handleExport} type="button">
+            <Download size={18} />
+            &nbsp;Export
+          </button>
           <button className="button" onClick={handleCreateClick} type="button">
             <Plus size={18} />
             &nbsp;Tambah Siswa
@@ -492,6 +565,65 @@ export function StudentsPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      ) : null}
+
+      {importModalOpen ? (
+        <div className="modal-backdrop" onClick={handleImportModalClose} role="presentation">
+          <div className="modal-panel" onClick={(event) => event.stopPropagation()} role="dialog">
+            <div className="modal-header">
+              <h2 className="modal-title">Import Students dari Excel</h2>
+              <p className="modal-copy">
+                Upload file Excel (.xlsx) yang sudah diisi sesuai template. Kolom NIS dan Nama Lengkap wajib diisi.
+              </p>
+            </div>
+
+            <div className="modal-body">
+              <div className="field field--full">
+                <label>File Excel (.xlsx)</label>
+                <div className="import-drop-zone">
+                  <input
+                    ref={fileInputRef}
+                    accept=".xlsx"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0] ?? null
+                      setImportFile(file)
+                    }}
+                    style={{ display: 'none' }}
+                    type="file"
+                  />
+                  {importFile ? (
+                    <div className="import-file-info">
+                      <span>{importFile.name}</span>
+                      <button className="button-ghost" onClick={() => { setImportFile(null); if (fileInputRef.current) fileInputRef.current.value = '' }} type="button">Ganti</button>
+                    </div>
+                  ) : (
+                    <button className="button button-ghost" onClick={() => fileInputRef.current?.click()} type="button">
+                      <Upload size={18} />
+                      &nbsp;Pilih File
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="import-actions-row">
+                <button className="button-ghost" onClick={handleDownloadTemplate} type="button">
+                  <Download size={16} />
+                  &nbsp;Download Template
+                </button>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button className="button-ghost" onClick={handleImportModalClose} type="button">
+                Batal
+              </button>
+              <button className="button" disabled={!importFile || importing} onClick={handleImportSubmit} type="button">
+                {importing ? <LoaderCircle className="spin" size={18} /> : null}
+                {importing ? ' Mengimport…' : 'Import Sekarang'}
+              </button>
+            </div>
           </div>
         </div>
       ) : null}

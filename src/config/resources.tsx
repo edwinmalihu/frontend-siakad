@@ -8,6 +8,7 @@ import {
   Layers3,
   LayoutList,
   MapPinned,
+  Shield,
   Users2,
 } from 'lucide-react'
 import type { ResourceConfig, ResourceRecord } from '../types/resources'
@@ -910,6 +911,98 @@ export const resourceConfigs: Record<string, ResourceConfig> = {
       },
       { name: 'grade_letter', label: 'Huruf Mutu', type: 'text', placeholder: 'A, B+, B, C+, C, D, E' },
       { name: 'predicate', label: 'Predikat', type: 'text', placeholder: 'Sangat Baik, Baik, Cukup, Kurang' },
+    ],
+  },
+
+  roles: {
+    key: 'roles',
+    route: '/admin/roles',
+    title: 'Roles',
+    eyebrow: 'Administration',
+    description: 'Kelola role sistem yang menentukan hak akses pengguna di seluruh modul.',
+    endpoint: '/roles',
+    searchPlaceholder: 'Cari nama atau kode role...',
+    icon: Shield,
+    accent: 'linear-gradient(135deg, #8b5cf6, #a78bfa)',
+    initialValues: {
+      name: '',
+      code: '',
+      description: '',
+    },
+    columns: [
+      { key: 'name', header: 'Name' },
+      { key: 'code', header: 'Code', render: (item) => softBadge(String(item.code ?? '-')) },
+      { key: 'description', header: 'Description' },
+    ],
+    fields: [
+      { name: 'name', label: 'Role Name', type: 'text', required: true, placeholder: 'Administrator' },
+      { name: 'code', label: 'Role Code', type: 'text', required: true, placeholder: 'admin' },
+      { name: 'description', label: 'Description', type: 'textarea', fullWidth: true, placeholder: 'Deskripsi singkat tentang role ini' },
+    ],
+  },
+
+  permissions: {
+    key: 'permissions',
+    route: '/admin/permissions',
+    title: 'Permissions',
+    eyebrow: 'Administration',
+    description: 'Kelola hak akses granular yang bisa diberikan ke setiap role.',
+    endpoint: '/permissions',
+    searchPlaceholder: 'Cari nama atau kode permission...',
+    icon: Shield,
+    accent: 'linear-gradient(135deg, #6366f1, #818cf8)',
+    initialValues: {
+      name: '',
+      code: '',
+      description: '',
+    },
+    columns: [
+      { key: 'name', header: 'Name' },
+      { key: 'code', header: 'Code', render: (item) => softBadge(String(item.code ?? '-')) },
+      { key: 'description', header: 'Description' },
+    ],
+    fields: [
+      { name: 'name', label: 'Permission Name', type: 'text', required: true, placeholder: 'Master Read' },
+      { name: 'code', label: 'Permission Code', type: 'text', required: true, placeholder: 'master.read' },
+      { name: 'description', label: 'Description', type: 'textarea', fullWidth: true, placeholder: 'Deskripsi singkat tentang permission ini' },
+    ],
+  },
+
+  users: {
+    key: 'users',
+    route: '/admin/users',
+    title: 'Users',
+    eyebrow: 'Administration',
+    description: 'Kelola akun pengguna sistem, termasuk pembuatan, update, dan penghapusan user.',
+    endpoint: '/users',
+    searchPlaceholder: 'Cari username, nama lengkap, atau email...',
+    icon: Users2,
+    accent: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+    initialValues: {
+      username: '',
+      password: '',
+      full_name: '',
+      email: '',
+      phone: '',
+      is_active: true,
+    },
+    columns: [
+      { key: 'username', header: 'Username' },
+      { key: 'full_name', header: 'Full Name' },
+      { key: 'email', header: 'Email' },
+      {
+        key: 'is_active',
+        header: 'Status',
+        render: (item) => statusBadge(String(item.is_active)),
+      },
+    ],
+    fields: [
+      { name: 'username', label: 'Username', type: 'text', required: true, placeholder: 'admin' },
+      { name: 'password', label: 'Password', type: 'text', placeholder: 'Minimal 6 karakter' },
+      { name: 'full_name', label: 'Full Name', type: 'text', required: true, placeholder: 'Administrator SIAKAD' },
+      { name: 'email', label: 'Email', type: 'email', placeholder: 'admin@siakad.local' },
+      { name: 'phone', label: 'Phone', type: 'text', placeholder: '081234567890' },
+      { name: 'is_active', label: 'Active', type: 'checkbox' },
     ],
   },
 }

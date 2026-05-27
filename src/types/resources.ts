@@ -67,4 +67,5 @@ export type ModuleCard = {
   accent: string
   icon: LucideIcon
   chips: string[]
+  allowedRoleCodes?: string[]
 }

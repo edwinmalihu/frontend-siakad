@@ -86,6 +86,11 @@ export async function getResource<T extends ResourceRecord>(endpoint: string, id
   return response.data.data
 }
 
+export async function replaceResource<T>(path: string, payload: ResourceRecord): Promise<T> {
+  const response = await http.put<ApiEnvelope<T>>(path, payload)
+  return response.data.data as T
+}
+
 export function extractError(error: unknown): string {
   if (axios.isAxiosError(error)) {
     return (
@@ -100,4 +105,49 @@ export function extractError(error: unknown): string {
   }
 
   return 'Terjadi kesalahan yang tidak diketahui.'
+}
+
+export async function downloadFile(endpoint: string, defaultFilename: string): Promise<void> {
+  const token = getStoredToken()
+  const headers: Record<string, string> = {}
+  if (token) {
+    headers.Authorization = `Bearer ${token}`
+  }
+
+  const response = await http.get(endpoint, {
+    headers,
+    responseType: 'blob',
+  })
+
+  const contentDisposition = response.headers['content-disposition'] ?? ''
+  const match = contentDisposition.match(/filename="?([^";\n]+)"?/)
+  const filename = match?.[1] ?? defaultFilename
+
+  const blob = new Blob([response.data])
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+}
+
+export async function uploadFile<T>(endpoint: string, file: File): Promise<T> {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  const token = getStoredToken()
+  const headers: Record<string, string> = {}
+  if (token) {
+    headers.Authorization = `Bearer ${token}`
+  }
+
+  const response = await http.post<ApiEnvelope<T>>(endpoint, formData, {
+    headers,
+    timeout: 60000,
+  })
+
+  return response.data.data
 }

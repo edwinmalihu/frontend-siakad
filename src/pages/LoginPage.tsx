@@ -40,7 +40,7 @@ export function LoginPage() {
         <div className="auth-hero">
           <div className="auth-badge">
             <School2 size={20} />
-            SMAK Negeri Padang
+            {import.meta.env.VITE_APP_NAME || 'SIAKAD'}
           </div>
           <h1 className="auth-title">Masuk ke portal admin SIAKAD.</h1>
           <p className="auth-copy">

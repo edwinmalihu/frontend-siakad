@@ -15,6 +15,12 @@ import { HubimCompaniesPage } from './pages/HubimCompaniesPage'
 import { HubimInternshipsPage } from './pages/HubimInternshipsPage'
 import { HubimAlumniPage } from './pages/HubimAlumniPage'
 import { InternshipLogsPage } from './pages/InternshipLogsPage'
+import { AuditLogsPage } from './pages/AuditLogsPage'
+import { RolesPage } from './pages/RolesPage'
+import { PermissionsPage } from './pages/PermissionsPage'
+import { RolePermissionsPage } from './pages/RolePermissionsPage'
+import { UserRolesPage } from './pages/UserRolesPage'
+import { UsersPage } from './pages/UsersPage'
 import { LoginPage } from './pages/LoginPage'
 import { RoomsPage } from './pages/RoomsPage'
 import { SchedulesPage } from './pages/SchedulesPage'
@@ -82,6 +88,14 @@ function App() {
           <Route element={<ProtectedRoute allowedRoleCodes={['shared', 'student_affairs', 'academic', 'industry_relations', 'hubim']} />}>
             <Route path="/announcements" element={<AnnouncementsPage />} />
             <Route path="/search-students" element={<SearchStudentsPage />} />
+          </Route>
+          <Route element={<ProtectedRoute allowedRoleCodes={['admin']} />}>
+            <Route path="/audit-logs" element={<AuditLogsPage />} />
+            <Route path="/admin/users" element={<UsersPage />} />
+            <Route path="/admin/roles" element={<RolesPage />} />
+            <Route path="/admin/permissions" element={<PermissionsPage />} />
+            <Route path="/admin/role-permissions" element={<RolePermissionsPage />} />
+            <Route path="/admin/user-roles" element={<UserRolesPage />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/dashboard" replace />} />

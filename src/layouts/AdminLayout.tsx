@@ -66,7 +66,7 @@ export function AdminLayout() {
             <ShieldCheck size={24} />
           </div>
           <div className="sidebar-brand__text">
-            <strong>SIAKAD Padang</strong>
+            <strong>{import.meta.env.VITE_APP_NAME || 'SIAKAD'}</strong>
             <span>Admin Control Center</span>
           </div>
         </div>
@@ -149,11 +149,6 @@ export function AdminLayout() {
             </section>
           ))}
         </div>
-
-        <div className="sidebar-footer">
-          Backend Go dan frontend React sekarang sudah searah.
-          Modul baru tinggal ditambahkan lewat config dan routing.
-        </div>
       </aside>
 
       <div className="app-main">
@@ -169,7 +164,7 @@ export function AdminLayout() {
             </button>
             <div>
               <div className="topbar__crumbs">{currentLabel}</div>
-              <div className="topbar__title">SMAK Negeri Padang</div>
+              <div className="topbar__title">{import.meta.env.VITE_APP_NAME || 'SIAKAD'}</div>
             </div>
           </div>
 
