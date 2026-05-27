@@ -14,6 +14,7 @@ import { HomeroomAssignmentsPage } from './pages/HomeroomAssignmentsPage'
 import { HubimCompaniesPage } from './pages/HubimCompaniesPage'
 import { HubimInternshipsPage } from './pages/HubimInternshipsPage'
 import { HubimAlumniPage } from './pages/HubimAlumniPage'
+import { InternshipLogsPage } from './pages/InternshipLogsPage'
 import { LoginPage } from './pages/LoginPage'
 import { RoomsPage } from './pages/RoomsPage'
 import { SchedulesPage } from './pages/SchedulesPage'
@@ -76,6 +77,7 @@ function App() {
             <Route path="/hubim/companies" element={<HubimCompaniesPage />} />
             <Route path="/hubim/internships" element={<HubimInternshipsPage />} />
             <Route path="/hubim/alumni" element={<HubimAlumniPage />} />
+            <Route path="/hubim/internship-logs" element={<InternshipLogsPage />} />
           </Route>
           <Route element={<ProtectedRoute allowedRoleCodes={['shared', 'student_affairs', 'academic', 'industry_relations', 'hubim']} />}>
             <Route path="/announcements" element={<AnnouncementsPage />} />
