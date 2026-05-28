@@ -43,15 +43,6 @@ export function LoginPage() {
             {import.meta.env.VITE_APP_NAME || 'SIAKAD'}
           </div>
           <h1 className="auth-title">Masuk ke portal admin SIAKAD.</h1>
-          <p className="auth-copy">
-            Gunakan akun admin untuk mengelola master data, guru, wali kelas, subject,
-            dan jadwal akademik dari satu dashboard yang terhubung langsung ke backend.
-          </p>
-          <div className="chip-row">
-            <span className="chip">React + Vite</span>
-            <span className="chip">Go Backend</span>
-            <span className="chip">MySQL VM</span>
-          </div>
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
@@ -100,11 +91,6 @@ export function LoginPage() {
             {submitting ? 'Memeriksa akun…' : 'Masuk ke Dashboard'}
             <ArrowRight size={18} />
           </button>
-
-          <p className="auth-hint">
-            Untuk fase awal, login ini memakai endpoint backend `POST /api/v1/auth/login`
-            dan memvalidasi session lewat `GET /api/v1/auth/me`.
-          </p>
         </form>
       </div>
     </div>
