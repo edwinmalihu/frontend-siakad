@@ -118,6 +118,8 @@ export function AuditLogsPage() {
 
   useEffect(() => {
     let isMounted = true
+    let interval: ReturnType<typeof setInterval> | null = null
+
     async function syncItems() {
       setLoading(true)
       try {
@@ -129,6 +131,20 @@ export function AuditLogsPage() {
         if (!isMounted) return
         setItems(listResult.items)
         setOverviewItems(overviewResult.items)
+
+        // Hitung user online dari hasil overview
+        const hasOnline = overviewResult.items.some((i) => i.action === 'login' && !i.logout_time)
+
+        // Hanya poll saat ada user online
+        if (interval) {
+          clearInterval(interval)
+          interval = null
+        }
+        if (hasOnline && isMounted) {
+          interval = setInterval(() => {
+            if (isMounted) void syncItems()
+          }, 5000)
+        }
       } catch (error) {
         if (!isMounted) return
         setErrorMessage(extractError(error))
@@ -138,14 +154,9 @@ export function AuditLogsPage() {
     }
     void syncItems()
 
-    // Auto-refresh setiap 5 detik untuk update status online/offline
-    const interval = setInterval(() => {
-      if (isMounted) void syncItems()
-    }, 5000)
-
     return () => {
       isMounted = false
-      clearInterval(interval)
+      if (interval) clearInterval(interval)
     }
   }, [deferredSearch, filterQuery])
 
