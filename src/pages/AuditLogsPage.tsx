@@ -13,6 +13,8 @@ type AuditLogRecord = ResourceRecord & {
   entity_id?: number
   payload_json?: string
   ip_address?: string
+  login_time?: string
+  logout_time?: string
   created_at?: string
 }
 
@@ -56,8 +58,21 @@ function ActionBadge({ value }: { value: unknown }) {
   if (normalized === 'update') return <span className="inline-status inline-status--male">Update</span>
   if (normalized === 'delete') return <span className="inline-status inline-status--female">Delete</span>
   if (normalized === 'login') return <span className="inline-status inline-status--soft">Login</span>
+  if (normalized === 'login_failed') return <span className="inline-status inline-status--inactive">Login Gagal</span>
   if (normalized === 'logout') return <span className="inline-status inline-status--inactive">Logout</span>
   return <span className="inline-status inline-status--inactive">{String(value ?? '-')}</span>
+}
+
+function OnlineStatus({ logoutTime }: { logoutTime?: string }) {
+  if (!logoutTime) {
+    return (
+      <span className="inline-status inline-status--active" style={{ gap: '4px' }}>
+        <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
+        Online
+      </span>
+    )
+  }
+  return <span className="inline-status inline-status--inactive">Offline</span>
 }
 
 function tryFormatJSON(raw: string | undefined) {
@@ -94,6 +109,10 @@ export function AuditLogsPage() {
   )
   const uniqueUsers = useMemo(
     () => new Set(overviewItems.map((i) => String(i.user_name ?? i.user_id ?? '')).filter(Boolean)).size,
+    [overviewItems],
+  )
+  const onlineUsers = useMemo(
+    () => overviewItems.filter((i) => i.action === 'login' && !i.logout_time).length,
     [overviewItems],
   )
 
@@ -172,6 +191,16 @@ export function AuditLogsPage() {
             <div className="stat-card__copy">Jumlah pengguna yang memiliki aktivitas tercatat.</div>
           </div>
         </article>
+        <article className="stat-card">
+          <div className="stat-card__icon stat-card__icon--teal">
+            <Users size={18} />
+          </div>
+          <div>
+            <div className="stat-card__label">Online</div>
+            <div className="stat-card__value">{onlineUsers}</div>
+            <div className="stat-card__copy">Pengguna yang sedang aktif (belum logout).</div>
+          </div>
+        </article>
       </section>
 
       {errorMessage ? <div className="feedback feedback--error">{errorMessage}</div> : null}
@@ -232,11 +261,12 @@ export function AuditLogsPage() {
             <table className="table">
               <thead>
                 <tr>
-                  <th>Waktu</th>
                   <th>User</th>
                   <th>Modul</th>
                   <th>Aksi</th>
-                  <th>Entity</th>
+                  <th>Waktu Login</th>
+                  <th>Waktu Logout</th>
+                  <th>Status</th>
                   <th>IP Address</th>
                 </tr>
               </thead>
@@ -248,9 +278,6 @@ export function AuditLogsPage() {
                     style={{ cursor: 'pointer' }}
                   >
                     <td>
-                      <span className="inline-status inline-status--soft">{formatTimestamp(item.created_at)}</span>
-                    </td>
-                    <td>
                       <div className="cell-title">{String(item.user_name ?? 'System')}</div>
                       {item.user_id ? <div className="cell-subtitle">ID: {item.user_id}</div> : null}
                     </td>
@@ -259,8 +286,13 @@ export function AuditLogsPage() {
                       <ActionBadge value={item.action} />
                     </td>
                     <td>
-                      <div className="cell-title">{String(item.entity_type ?? '-')}</div>
-                      {item.entity_id ? <div className="cell-subtitle">ID: {item.entity_id}</div> : null}
+                      <span className="inline-status inline-status--soft">{formatTimestamp(item.login_time ?? item.created_at)}</span>
+                    </td>
+                    <td>
+                      <span className="inline-status inline-status--soft">{formatTimestamp(item.logout_time)}</span>
+                    </td>
+                    <td>
+                      <OnlineStatus logoutTime={item.logout_time} />
                     </td>
                     <td>
                       <div className="cell-subtitle">{String(item.ip_address ?? '-')}</div>
@@ -296,6 +328,27 @@ export function AuditLogsPage() {
                   <label>Entity</label>
                   <div>{String(detailItem.entity_type ?? '-')} {detailItem.entity_id ? `#${detailItem.entity_id}` : ''}</div>
                 </div>
+                {detailItem.action === 'login' ? (
+                  <>
+                    <div className="field">
+                      <label>Waktu Login</label>
+                      <div>{formatTimestamp(detailItem.login_time ?? detailItem.created_at)}</div>
+                    </div>
+                    <div className="field">
+                      <label>Waktu Logout</label>
+                      <div>{detailItem.logout_time ? formatTimestamp(detailItem.logout_time) : 'Masih online'}</div>
+                    </div>
+                    <div className="field">
+                      <label>Status</label>
+                      <div><OnlineStatus logoutTime={detailItem.logout_time} /></div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="field">
+                    <label>Waktu</label>
+                    <div>{formatTimestamp(detailItem.created_at)}</div>
+                  </div>
+                )}
               </div>
               {formattedPayload ? (
                 <div className="field" style={{ marginTop: '16px' }}>
