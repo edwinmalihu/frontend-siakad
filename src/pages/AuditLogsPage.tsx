@@ -137,8 +137,15 @@ export function AuditLogsPage() {
       }
     }
     void syncItems()
+
+    // Auto-refresh setiap 5 detik untuk update status online/offline
+    const interval = setInterval(() => {
+      if (isMounted) void syncItems()
+    }, 5000)
+
     return () => {
       isMounted = false
+      clearInterval(interval)
     }
   }, [deferredSearch, filterQuery])
 
