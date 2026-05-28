@@ -1,5 +1,6 @@
 import { startTransition, useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { Layers3, LayoutList, LoaderCircle, PencilLine, Plus, Search, SortAsc, Trash2 } from 'lucide-react'
+import { ImportExportPanel } from '../components/ImportExportPanel'
 import { createResource, deleteResource, extractError, listResource, updateResource } from '../lib/api'
 import type { ResourceRecord } from '../types/resources'
 import { resourceConfigs } from '../config/resources'
@@ -163,6 +164,7 @@ export function GradeLevelsPage() {
           <p className="page-header__description">{config.description}</p>
         </div>
         <div className="page-header__actions">
+          <ImportExportPanel module="grade-levels" label="Tingkat" onImportSuccess={refreshList} />
           <button className="button" onClick={handleCreateClick} type="button">
             <Plus size={18} />
             &nbsp;Tambah Tingkat

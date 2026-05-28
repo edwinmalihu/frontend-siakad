@@ -1,5 +1,6 @@
 import { startTransition, useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { FolderKanban, GraduationCap, Layers3, LoaderCircle, PencilLine, Plus, Search, Trash2 } from 'lucide-react'
+import { ImportExportPanel } from '../components/ImportExportPanel'
 import { createResource, deleteResource, extractError, listResource, updateResource } from '../lib/api'
 import type { ResourceRecord } from '../types/resources'
 import { resourceConfigs } from '../config/resources'
@@ -175,6 +176,7 @@ export function DepartmentsPage() {
           <p className="page-header__description">{config.description}</p>
         </div>
         <div className="page-header__actions">
+          <ImportExportPanel module="departments" label="Jurusan" onImportSuccess={refreshList} />
           <button className="button" onClick={handleCreateClick} type="button">
             <Plus size={18} />
             &nbsp;Tambah Jurusan

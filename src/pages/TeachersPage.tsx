@@ -1,5 +1,6 @@
 import { startTransition, useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { Briefcase, CheckCircle2, GraduationCap, LoaderCircle, PencilLine, Plus, Search, Trash2 } from 'lucide-react'
+import { ImportExportPanel } from '../components/ImportExportPanel'
 import { createResource, deleteResource, extractError, listResource, updateResource } from '../lib/api'
 import type { ResourceRecord } from '../types/resources'
 import { resourceConfigs } from '../config/resources'
@@ -310,6 +311,7 @@ export function TeachersPage() {
         </div>
 
         <div className="page-header__actions">
+          <ImportExportPanel module="teachers" label="Guru" onImportSuccess={refreshList} />
           <button className="button" onClick={handleCreateClick} type="button">
             <Plus size={18} />
             &nbsp;Tambah Guru

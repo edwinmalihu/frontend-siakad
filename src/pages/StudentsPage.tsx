@@ -1,5 +1,6 @@
 import { startTransition, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import { CalendarRange, Download, LoaderCircle, PencilLine, Plus, Search, Trash2, Upload, Users2 } from 'lucide-react'
+import { ImportResultModal } from '../components/ImportResultModal'
 import { createResource, deleteResource, downloadFile, extractError, listResource, updateResource, uploadFile } from '../lib/api'
 import type { ResourceRecord } from '../types/resources'
 
@@ -128,8 +129,19 @@ export function StudentsPage() {
   const [importModalOpen, setImportModalOpen] = useState(false)
   const [importFile, setImportFile] = useState<File | null>(null)
   const [importing, setImporting] = useState(false)
-  const [importResult, setImportResult] = useState<string>('')
+  const [importResult, setImportResult] = useState<{
+    total_rows?: number
+    skipped_rows?: number
+    success_count?: number
+    error_count?: number
+    errors?: Array<{ row: number; message: string }>
+  } | null>(null)
+  const [resultModalOpen, setResultModalOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [exportModalOpen, setExportModalOpen] = useState(false)
+  const [exportStatus, setExportStatus] = useState('')
+  const [exportGender, setExportGender] = useState('')
+  const [exportEntryYear, setExportEntryYear] = useState('')
 
   const filterQuery = useMemo(() => {
     const query: Record<string, string | number> = {}
@@ -266,13 +278,28 @@ export function StudentsPage() {
     }
   }
 
-  async function handleExport() {
-    try {
-      setErrorMessage('')
-      await downloadFile('/shared/export/students', 'export_students.xlsx')
-    } catch (error) {
+  function handleExportClick() {
+    setExportStatus('')
+    setExportGender('')
+    setExportEntryYear('')
+    setExportModalOpen(true)
+  }
+
+  function handleExportModalClose() {
+    setExportModalOpen(false)
+  }
+
+  function handleExportSubmit() {
+    setExportModalOpen(false)
+    const params = new URLSearchParams()
+    if (exportStatus) params.set('status', exportStatus)
+    if (exportGender) params.set('gender', exportGender)
+    if (exportEntryYear) params.set('entry_year', exportEntryYear)
+    const query = params.toString()
+    const url = `/shared/export/students${query ? `?${query}` : ''}`
+    downloadFile(url, 'export_students.xlsx').catch((error) => {
       setErrorMessage(extractError(error))
-    }
+    })
   }
 
   function handleDownloadTemplate() {
@@ -283,7 +310,7 @@ export function StudentsPage() {
 
   function handleImportClick() {
     setImportFile(null)
-    setImportResult('')
+    setImportResult(null)
     setErrorMessage('')
     setImportModalOpen(true)
   }
@@ -291,7 +318,11 @@ export function StudentsPage() {
   function handleImportModalClose() {
     setImportModalOpen(false)
     setImportFile(null)
-    setImportResult('')
+  }
+
+  function handleResultModalClose() {
+    setResultModalOpen(false)
+    setImportResult(null)
   }
 
   async function handleImportSubmit() {
@@ -299,21 +330,19 @@ export function StudentsPage() {
     try {
       setImporting(true)
       setErrorMessage('')
-      setImportResult('')
-      const result = await uploadFile<{ imported?: number; skipped?: number; errors?: string[] }>(
+      const result = await uploadFile<{
+        total_rows?: number
+        skipped_rows?: number
+        success_count?: number
+        error_count?: number
+        errors?: Array<{ row: number; message: string }>
+      }>(
         '/shared/import/students',
         importFile,
       )
-      const imported = result.imported ?? 0
-      const skipped = result.skipped ?? 0
-      const errorList = result.errors ?? []
-      let msg = `Import selesai: ${imported} berhasil, ${skipped} dilewati.`
-      if (errorList.length > 0) {
-        msg += `\n${errorList.join('\n')}`
-      }
-      setImportResult(msg)
+      setImportResult(result)
       setImportModalOpen(false)
-      setSuccessMessage(msg)
+      setResultModalOpen(true)
       await refreshList()
     } catch (error) {
       setErrorMessage(extractError(error))
@@ -341,7 +370,7 @@ export function StudentsPage() {
             <Upload size={18} />
             &nbsp;Import
           </button>
-          <button className="button button-ghost" onClick={handleExport} type="button">
+          <button className="button button-ghost" onClick={handleExportClick} type="button">
             <Download size={18} />
             &nbsp;Export
           </button>
@@ -626,6 +655,76 @@ export function StudentsPage() {
             </div>
           </div>
         </div>
+      ) : null}
+
+      {exportModalOpen ? (
+        <div className="modal-backdrop" onClick={handleExportModalClose} role="presentation">
+          <div className="modal-panel" onClick={(event) => event.stopPropagation()} role="dialog">
+            <div className="modal-header">
+              <h2 className="modal-title">Export Students</h2>
+              <p className="modal-copy">
+                Pilih filter untuk data yang ingin di-export. Kosongkan untuk export semua data.
+              </p>
+            </div>
+
+            <div className="modal-body">
+              <div className="form-grid">
+                <div className="field">
+                  <label htmlFor="export-status">Status</label>
+                  <select
+                    id="export-status"
+                    value={exportStatus}
+                    onChange={(event) => setExportStatus(event.target.value)}
+                  >
+                    <option value="">Semua Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
+
+                <div className="field">
+                  <label htmlFor="export-gender">Jenis Kelamin</label>
+                  <select
+                    id="export-gender"
+                    value={exportGender}
+                    onChange={(event) => setExportGender(event.target.value)}
+                  >
+                    <option value="">Semua Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+
+                <div className="field">
+                  <label htmlFor="export-entry-year">Tahun Masuk</label>
+                  <input
+                    id="export-entry-year"
+                    type="number"
+                    min={1901}
+                    max={2155}
+                    placeholder="Semua Angkatan"
+                    value={exportEntryYear}
+                    onChange={(event) => setExportEntryYear(event.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button className="button-ghost" onClick={handleExportModalClose} type="button">
+                Batal
+              </button>
+              <button className="button" onClick={handleExportSubmit} type="button">
+                <Download size={18} />
+                &nbsp;Export Sekarang
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {resultModalOpen && importResult ? (
+        <ImportResultModal result={importResult} moduleLabel="Students" onClose={handleResultModalClose} />
       ) : null}
     </div>
   )

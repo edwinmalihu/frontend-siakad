@@ -1,5 +1,6 @@
 import { startTransition, useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { CalendarRange, CheckCircle2, LoaderCircle, PencilLine, Plus, Search, Trash2 } from 'lucide-react'
+import { ImportExportPanel } from '../components/ImportExportPanel'
 import { createResource, deleteResource, extractError, listResource, updateResource } from '../lib/api'
 import type { ResourceRecord } from '../types/resources'
 import { resourceConfigs } from '../config/resources'
@@ -265,6 +266,7 @@ export function AcademicYearsPage() {
         </div>
 
         <div className="page-header__actions">
+          <ImportExportPanel module="academic-years" label="Tahun Ajaran" onImportSuccess={refreshList} />
           <button className="button" onClick={handleCreateClick} type="button">
             <Plus size={18} />
             &nbsp;Tambah Tahun Ajaran
