@@ -85,7 +85,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           saveAuthSession(loginData.access_token, loginData.user)
         })
       },
-      logout() {
+      async logout() {
+        try {
+          if (token) {
+            await authHttp.post('/logout', null, {
+              headers: { Authorization: `Bearer ${token}` },
+            })
+          }
+        } catch {
+          // logout tetap dilakukan meskipun backend gagal
+        }
         clearAuthSession()
         startTransition(() => {
           setToken('')
