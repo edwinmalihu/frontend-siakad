@@ -4,9 +4,7 @@ import {
   createResource,
   deleteResource,
   extractError,
-  getResource,
   listResource,
-  replaceResource,
   updateResource,
 } from '../lib/api'
 import type { ResourceRecord } from '../types/resources'

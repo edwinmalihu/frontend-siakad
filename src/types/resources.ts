@@ -17,6 +17,7 @@ export type ResourceFieldConfig = {
   description?: string
   nullable?: boolean
   min?: number
+  max?: number
   step?: string
   options?: StaticOption[]
   optionsEndpoint?: string

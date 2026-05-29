@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowRight, Calendar, ChevronDown, Clock, Megaphone } from 'lucide-react'
+import { ArrowRight, Calendar, ChevronDown, Megaphone } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { dashboardCards } from '../config/navigation'
 import { useAuth } from '../contexts/useAuth'

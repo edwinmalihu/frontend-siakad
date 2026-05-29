@@ -1,5 +1,5 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react'
-import { FileClock, Layers, LoaderCircle, Search, Users } from 'lucide-react'
+import { FileClock, Layers, Search, Users } from 'lucide-react'
 import { extractError, listResource } from '../lib/api'
 import type { ResourceRecord } from '../types/resources'
 

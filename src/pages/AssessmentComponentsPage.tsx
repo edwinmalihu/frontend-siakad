@@ -209,7 +209,7 @@ export function AssessmentComponentsPage() {
     }
     setFormSemesterOptions(
       allSemesterOptions.filter(
-        (opt) => String(opt.academic_year_id ?? '') === formValues.academic_year_id,
+        (opt) => String((opt as Record<string, unknown>).academic_year_id ?? '') === formValues.academic_year_id,
       ),
     )
   }, [formValues.academic_year_id, allSemesterOptions])

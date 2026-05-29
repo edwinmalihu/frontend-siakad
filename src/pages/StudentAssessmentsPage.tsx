@@ -264,7 +264,7 @@ export function StudentAssessmentsPage() {
     }
     setFormSemesterOptions(
       allSemesterOptions.filter(
-        (opt) => String(opt.academic_year_id ?? '') === formValues.academic_year_id,
+        (opt) => String((opt as Record<string, unknown>).academic_year_id ?? '') === formValues.academic_year_id,
       ),
     )
   }, [formValues.academic_year_id, allSemesterOptions])
@@ -276,9 +276,11 @@ export function StudentAssessmentsPage() {
     }
     setFormComponentOptions(
       allComponentOptions.filter(
-        (opt) =>
-          String(opt.subject_id ?? '') === formValues.subject_id &&
-          String(opt.semester_id ?? '') === formValues.semester_id,
+        (opt) => {
+          const o = opt as Record<string, unknown>
+          return String(o.subject_id ?? '') === formValues.subject_id &&
+            String(o.semester_id ?? '') === formValues.semester_id
+        },
       ),
     )
   }, [formValues.subject_id, formValues.semester_id, allComponentOptions])
