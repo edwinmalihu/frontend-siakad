@@ -7,6 +7,7 @@ import {
   Factory,
   BriefcaseBusiness,
   FileClock,
+  KeyRound,
   Shield,
   ShieldCheck,
   ShieldAlert,
@@ -25,6 +26,7 @@ export const navigationSections: NavigationSection[] = [
     label: 'Inti',
     items: [
       { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+      { label: 'License', path: '/license', icon: KeyRound },
       {
         label: 'Kesiswaan',
         path: '/kesiswaan',

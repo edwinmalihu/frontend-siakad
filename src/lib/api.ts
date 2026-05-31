@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getStoredToken } from './auth-storage'
+import { clearAuthSession, getStoredToken } from './auth-storage'
 import type { ResourceRecord } from '../types/resources'
 
 type ApiEnvelope<T> = {
@@ -24,6 +24,36 @@ http.interceptors.request.use((config) => {
   }
   return config
 })
+
+http.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (axios.isAxiosError(error) && error.response) {
+      const status = error.response.status
+
+      // 401 — token invalid/expired, clear session and redirect to login
+      if (status === 401) {
+        clearAuthSession()
+        const currentPath = window.location.pathname
+        if (currentPath !== '/login') {
+          window.location.href = '/login'
+        }
+      }
+
+      // 403 — license issues
+      if (status === 403) {
+        const code = (error.response.data as { code?: string })?.code
+        if (code === 'LICENSE_REQUIRED' || code === 'LICENSE_EXPIRED' || code === 'LICENSE_UNKNOWN') {
+          const currentPath = window.location.pathname
+          if (currentPath !== '/license') {
+            window.location.href = '/license'
+          }
+        }
+      }
+    }
+    return Promise.reject(error)
+  },
+)
 
 export async function listResource<T extends ResourceRecord>(
   endpoint: string,

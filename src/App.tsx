@@ -22,6 +22,7 @@ import { RolePermissionsPage } from './pages/RolePermissionsPage'
 import { UserRolesPage } from './pages/UserRolesPage'
 import { UsersPage } from './pages/UsersPage'
 import { LoginPage } from './pages/LoginPage'
+import { LicensePage } from './pages/LicensePage'
 import { RoomsPage } from './pages/RoomsPage'
 import { SchedulesPage } from './pages/SchedulesPage'
 import { SearchStudentsPage } from './pages/SearchStudentsPage'
@@ -45,6 +46,7 @@ function App() {
         <Route element={<AdminLayout />}>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/license" element={<LicensePage />} />
 
           <Route element={<ProtectedRoute allowedRoleCodes={['academic']} />}>
             <Route path="/master/academic-years" element={<AcademicYearsPage />} />

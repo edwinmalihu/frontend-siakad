@@ -5,6 +5,7 @@ import { navigationSections } from '../config/navigation'
 import { filterNavigationByRole, formatRoleLabel } from '../lib/access-control'
 import type { NavigationItem } from '../types/resources'
 import { useAuth } from '../contexts/useAuth'
+import { LicenseAlert } from '../components/LicenseAlert'
 
 function matchesPath(pathname: string, item: NavigationItem): boolean {
   if (item.path === pathname) {
@@ -183,6 +184,7 @@ export function AdminLayout() {
         </header>
 
         <main className="content-area">
+          <LicenseAlert />
           <Outlet />
         </main>
       </div>
